@@ -112,7 +112,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		if (messageContent.equals(MSG_FILE_LIST)) {
+		DLog.i("Message Content is : "+messageContent);
+		if (messageContent.equals(MSG_FILE_LIST_REQUEST)) {
 			_handleSendFileList(message);
 		} else if (messageContent.equals(MSG_FILE_REQUEST)) {
 			_handleSendFile(message);
@@ -161,10 +162,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 	private void _handleSendFileList(DeviceMessage message) {
 		String path = message.getMetaFilePath();
 		if (path == null) {
+			DLog.i("File List path is null");
 			return;
 		}
 
+		DLog.i("Handling send file list");
 		if (MainActivity.getInstance() != null) {
+			DLog.i("Found a main activity");
 			SendFileList sender = new SendFileList(MainActivity.getInstance());
 			String rootPath = MainActivity.getInstance().getSetting(
 					FtDroidActivity.PREF_ROOT_PATH, "");
@@ -182,6 +186,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			sender.setReturnEvents(false);
 			sender.send(path, fileListJson, message.getMessageID(), error);
 		}
+		
 	}
 
 	private void _handleSendFile(DeviceMessage message) {

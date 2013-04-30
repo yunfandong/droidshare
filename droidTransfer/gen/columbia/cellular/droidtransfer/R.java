@@ -20,6 +20,13 @@ public final class R {
         public static final int text_color_light=0x7f040003;
     }
     public static final class dimen {
+        /** 
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
+    
+         */
+        public static final int activity_horizontal_margin=0x7f050004;
+        public static final int activity_vertical_margin=0x7f050005;
         public static final int default_text_field_height=0x7f050000;
         public static final int default_text_field_padding=0x7f050001;
         public static final int padding_cell=0x7f050002;
@@ -67,63 +74,68 @@ public final class R {
         public static final int maintab_users_selected=0x7f020026;
     }
     public static final class id {
-        public static final int connectButton=0x7f090007;
+        public static final int action_settings=0x7f09001e;
+        public static final int connectButton=0x7f09000a;
         public static final int container=0x7f090013;
-        public static final int email=0x7f09000b;
-        public static final int filedialogitem_img=0x7f090001;
-        public static final int filedialogitem_name=0x7f090002;
-        public static final int filedialogitem_path=0x7f090003;
-        public static final int label_last_seen=0x7f090006;
-        public static final int label_nickname=0x7f090004;
-        public static final int label_pairemail=0x7f090005;
-        public static final int linearLayout1=0x7f090017;
-        public static final int list_tab=0x7f09000f;
-        public static final int list_tab1=0x7f090015;
-        public static final int login=0x7f09000d;
-        public static final int login_form=0x7f09000a;
-        public static final int login_status=0x7f090008;
-        public static final int login_status_message=0x7f090009;
-        public static final int menu_settings=0x7f09001d;
-        public static final int nickname=0x7f09000c;
+        public static final int email=0x7f09000c;
+        public static final int filedialogitem_img=0x7f090004;
+        public static final int filedialogitem_name=0x7f090005;
+        public static final int filedialogitem_path=0x7f090006;
+        public static final int label_last_seen=0x7f090009;
+        public static final int label_nickname=0x7f090007;
+        public static final int label_pairemail=0x7f090008;
+        public static final int linearLayout1=0x7f090018;
+        public static final int listView1=0x7f090002;
+        public static final int list_tab=0x7f090010;
+        public static final int list_tab1=0x7f090016;
+        public static final int login=0x7f09000e;
+        public static final int login_form=0x7f09000b;
+        public static final int login_status=0x7f090000;
+        public static final int login_status_message=0x7f090001;
+        public static final int menu_settings=0x7f09001f;
+        public static final int nickname=0x7f09000d;
         public static final int pairListLayout=0x7f090012;
-        public static final int pair_button=0x7f090014;
-        public static final int pair_list_empty=0x7f090011;
-        public static final int pathlabel=0x7f090018;
-        public static final int rootpath=0x7f09001a;
-        public static final int selectFileButton=0x7f09001b;
-        public static final int selectPathButton=0x7f090019;
-        public static final int sign_in_button=0x7f09000e;
-        public static final int uploadButton=0x7f09001c;
-        public static final int upload_tab=0x7f090010;
-        public static final int upload_tab1=0x7f090016;
-        public static final int vw1=0x7f090000;
+        public static final int pair_button=0x7f090015;
+        public static final int pair_list_empty=0x7f090014;
+        public static final int pathlabel=0x7f090019;
+        public static final int rootpath=0x7f09001b;
+        public static final int selectFileButton=0x7f09001c;
+        public static final int selectPathButton=0x7f09001a;
+        public static final int sign_in_button=0x7f09000f;
+        public static final int uploadButton=0x7f09001d;
+        public static final int upload_tab=0x7f090011;
+        public static final int upload_tab1=0x7f090017;
+        public static final int vw1=0x7f090003;
     }
     public static final class layout {
-        public static final int filedialogitem=0x7f030000;
-        public static final int listcell=0x7f030001;
-        public static final int listdialogitem=0x7f030002;
-        public static final int login=0x7f030003;
-        public static final int main=0x7f030004;
-        public static final int pair_dialog=0x7f030005;
-        public static final int setting=0x7f030006;
-        public static final int upload=0x7f030007;
+        public static final int activity_file_list=0x7f030000;
+        public static final int filedialogitem=0x7f030001;
+        public static final int listcell=0x7f030002;
+        public static final int listdialogitem=0x7f030003;
+        public static final int login=0x7f030004;
+        public static final int main=0x7f030005;
+        public static final int pair_dialog=0x7f030006;
+        public static final int setting=0x7f030007;
+        public static final int upload=0x7f030008;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int file_list=0x7f080000;
+        public static final int main=0x7f080001;
     }
     public static final class string {
-        public static final int action_forgot_password=0x7f060022;
-        public static final int action_pair=0x7f060021;
-        public static final int action_sign_in_register=0x7f06001f;
-        public static final int action_sign_in_short=0x7f060020;
-        public static final int app_initializing=0x7f060024;
+        public static final int action_forgot_password=0x7f060024;
+        public static final int action_pair=0x7f060023;
+        public static final int action_settings=0x7f06001d;
+        public static final int action_sign_in_register=0x7f060021;
+        public static final int action_sign_in_short=0x7f060022;
+        public static final int app_initializing=0x7f060026;
         public static final int app_name=0x7f060000;
         public static final int default_root=0x7f060015;
         public static final int error_dialog_title=0x7f060017;
-        public static final int error_field_required=0x7f060028;
-        public static final int error_incorrect_password=0x7f060027;
-        public static final int error_invalid_email=0x7f060025;
-        public static final int error_invalid_password=0x7f060026;
+        public static final int error_field_required=0x7f06002a;
+        public static final int error_incorrect_password=0x7f060029;
+        public static final int error_invalid_email=0x7f060027;
+        public static final int error_invalid_password=0x7f060028;
         public static final int gcm_deleted=0x7f06000b;
         public static final int gcm_error=0x7f060009;
         public static final int gcm_message=0x7f060008;
@@ -134,7 +146,7 @@ public final class R {
         public static final int holder_nickname=0x7f06001a;
         public static final int last_seen=0x7f06001b;
         public static final int loading=0x7f060016;
-        public static final int login_progress_signing_in=0x7f060023;
+        public static final int login_progress_signing_in=0x7f060025;
         public static final int main_tab_peers=0x7f060004;
         public static final int main_tab_setting=0x7f060005;
         /**  action bars 
@@ -149,14 +161,15 @@ public final class R {
         public static final int pair_open=0x7f060019;
         /**  Strings related to login 
          */
-        public static final int prompt_email=0x7f06001d;
-        public static final int prompt_password=0x7f06001e;
+        public static final int prompt_email=0x7f06001f;
+        public static final int prompt_password=0x7f060020;
         public static final int server_register_error=0x7f06000f;
         public static final int server_registered=0x7f06000d;
         public static final int server_registering=0x7f06000c;
         public static final int server_unregister_error=0x7f060010;
         public static final int server_unregistered=0x7f06000e;
-        public static final int title_activity_register=0x7f06001c;
+        public static final int title_activity_file_list=0x7f06001c;
+        public static final int title_activity_register=0x7f06001e;
     }
     public static final class style {
         /** 

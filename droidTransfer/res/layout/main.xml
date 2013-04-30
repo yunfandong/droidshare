@@ -37,17 +37,6 @@
         
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/pair_list_empty"
-        android:layout_width="match_parent"
-        android:layout_height="138dp"
-        android:height="@dimen/default_text_field_height"
-        android:padding="@dimen/default_text_field_padding"
-        android:text="@string/pair_list_empty"
-        android:textColor="@color/text_color_dark"
-        android:textStyle="italic"
-        android:visibility="visible" />
-
     <LinearLayout
         android:id="@+id/login_status"
         android:layout_width="match_parent"
@@ -88,5 +77,16 @@
         </ListView>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/pair_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="138dp"
+        android:height="@dimen/default_text_field_height"
+        android:padding="@dimen/default_text_field_padding"
+        android:text="@string/pair_list_empty"
+        android:textColor="@color/text_color_dark"
+        android:textStyle="italic"
+        android:visibility="visible" />
 
 </LinearLayout>

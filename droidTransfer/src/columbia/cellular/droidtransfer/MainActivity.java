@@ -70,6 +70,7 @@ public class MainActivity extends FtDroidActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		instance = this;
 		app = (droidApp) getApplication();
 		// init
 		initViews();
@@ -85,7 +86,6 @@ public class MainActivity extends FtDroidActivity {
 		// adapter = new MyAdapter(this);
 		// setListAdapter(adapter);
 		// }
-		((droidApp) getApplication()).writeAnything("I love kemi");
 		loadPairList();
 	}
 

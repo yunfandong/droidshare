@@ -4,12 +4,11 @@
     <string name="app_name">droidTransfer</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    
+
     <!-- action bars -->
     <string name="main_tab_upload">Upload</string>
     <string name="main_tab_peers">Peers</string>
     <string name="main_tab_setting">Setup</string>
-    
     <string name="gcm_registered">From GCM: device successfully registered!</string>
     <string name="gcm_unregistered">From GCM: device successfully unregistered!</string>
     <string name="gcm_message">From GCM: you got message!</string>
@@ -32,6 +31,7 @@
     <string name="pair_open">Open</string>
     <string name="holder_nickname">Nickname</string>
     <string name="last_seen">last seen</string>
-    
+    <string name="title_activity_file_list">FileListActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
