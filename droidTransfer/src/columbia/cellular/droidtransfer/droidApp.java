@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import columbia.cellular.Utils.DLog;
-import columbia.cellular.json.JSONArray;
-import columbia.cellular.json.JSONException;
-import columbia.cellular.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Message;
@@ -120,15 +120,6 @@ public class droidApp extends Application{
 	public String getLoginJSON(){
 		JSONObject a = new JSONObject();
 		
-    	try {
-			a.append("type", "login");
-			a.append("userid", this.getNickName());
-			a.append("email", this.getEmail());
-			a.append("imei", this.getIMEI());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			DLog.i(e.getMessage());
-		}	
     	return a.toString();	
 	}
 	
@@ -143,10 +134,9 @@ public class droidApp extends Application{
 		
 		for(Map<String,Object> map : list){
 			JSONObject singleJSON = new JSONObject();
-			singleJSON.append("nickname", map.get("nickname"));
-			singleJSON.append("email", map.get("email"));
-			singleJSON.append("state",map.get("state") );
-			
+			//singleJSON.append("nickname", map.get("nickname"));
+			//singleJSON.append("email", map.get("email"));
+			//singleJSON.append("state",map.get("state") );
 			responseJSON.accumulate("users", singleJSON);
 		}
 		
