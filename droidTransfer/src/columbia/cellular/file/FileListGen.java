@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import columbia.cellular.Utils.DLog;
+
 public class FileListGen {
 	
 	//current path
@@ -63,9 +65,12 @@ public class FileListGen {
 		
 		String type = file.isDirectory()?"folder":"file";
 		
-		//get the relative path to the root
-		int index = file.getPath().lastIndexOf(root);
-		String relative_path = file.getPath().substring(index+1);
+		
+        
+		String relative_path = file.getPath().substring(file.getPath().lastIndexOf(root));
+	
+		
+	//	DLog.i(file.getPath()+"   :   "+root+"   :   "+relative_path);
 		
 		JSONObject file_item = new JSONObject();
 		file_item.put("name", file.getName());
