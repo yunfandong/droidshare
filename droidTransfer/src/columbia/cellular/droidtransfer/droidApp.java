@@ -34,9 +34,7 @@ public class droidApp extends Application{
     public static final String SENDER_ID = "178896580049";
 	
 	private Handler mainHandler;
-	
 	public String ACTION_SEND_REQUEST ="action_send_request";
-	
 	public int RESPONSE_MESSAGE = 0;
 	
 	@Override

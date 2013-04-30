@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -45,7 +46,7 @@ public class SettingActivity extends Activity {
 		email = app.getEmail();
 		
 		if(app.getRootPath().length()>1) rootPath = app.getRootPath();
-		else rootPath = "/";
+		else rootPath = Environment.getExternalStorageDirectory().getPath();
 		
 		
 		DLog.i("Setup Activity Start  id: "+userId+"  email: "+email);		

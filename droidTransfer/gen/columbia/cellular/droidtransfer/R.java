@@ -109,11 +109,12 @@ public final class R {
         public static final int action_pair=0x7f05001a;
         public static final int action_sign_in_register=0x7f050018;
         public static final int action_sign_in_short=0x7f050019;
+        public static final int app_initializing=0x7f05001d;
         public static final int app_name=0x7f050000;
-        public static final int error_field_required=0x7f050020;
-        public static final int error_incorrect_password=0x7f05001f;
-        public static final int error_invalid_email=0x7f05001d;
-        public static final int error_invalid_password=0x7f05001e;
+        public static final int error_field_required=0x7f050021;
+        public static final int error_incorrect_password=0x7f050020;
+        public static final int error_invalid_email=0x7f05001e;
+        public static final int error_invalid_password=0x7f05001f;
         public static final int gcm_deleted=0x7f05000b;
         public static final int gcm_error=0x7f050009;
         public static final int gcm_message=0x7f050008;

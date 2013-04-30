@@ -40,6 +40,7 @@ public class ApiServerConnector {
 	public static final String API_URL_SEND_FILE = "/send-file";
 	public static final String API_URL_DOWNLOAD_FILE = "/download-file";
 	public static final String API_URL_MESSAGES = "/messages";
+	public static final String API_URL_GCM_UPDATE = "/gcm-update";
 	
 	
 	

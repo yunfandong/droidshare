@@ -1,5 +1,7 @@
 package columbia.cellular.droidtransfer;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import columbia.cellular.Utils.DLog;
+import columbia.cellular.api.apicalls.GcmUpdate;
 import columbia.cellular.api.entities.FtDroidActivity;
 
 import com.google.android.gcm.GCMBaseIntentService;
@@ -34,6 +37,14 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Editor prefEditor = pref.edit();
 		prefEditor.putString(FtDroidActivity.PREF_GCM_REGISTRATION_ID, registrationId);
 		prefEditor.commit();
+		if(LoginActivity.instance != null){
+			LoginActivity.instance.registrationReceived(registrationId);
+			DLog.i("Updating on the server...");
+			if(LoginActivity.instance.isRegistered()){
+				GcmUpdate updateGcm = new GcmUpdate(LoginActivity.instance);
+				updateGcm.update(registrationId);
+			}
+		}
     }
 
     @Override
@@ -91,8 +102,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         
+        //Notification notification = new Notification(icon, message, when);
         Notification notification = new Notification(icon, message, when);
-        
         String title = context.getString(R.string.app_name);
         
         Intent notificationIntent = new Intent(context, MainActivity.class);
