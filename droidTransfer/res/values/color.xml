@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="null_color">#00000000</color>
+    <color name="chat_room_background">#D3D9E6FF</color>
+    <color name="text_color_dark">#FF414951</color>
+    <color name="text_color_light">#FFD3D3D3</color>
+    <color name="global_background_lightblue">#FF87C3ED</color>
+    <color name="item_selected_color">#AA82D822</color>
+    <color name="action_bar_item_selected_color">#FFD8B922</color>
+    
+    
+</resources>

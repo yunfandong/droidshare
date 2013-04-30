@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+
+        <TextView
+            android:id="@+id/list_tab1"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/main_tab_default_background"
+            android:drawableTop="@drawable/maintab_users_default"
+            android:gravity="center_horizontal"
+            android:text="@string/main_tab_peers"
+            android:textColor="@color/text_color_light" />
+
+        <TextView
+            android:id="@+id/upload_tab1"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/main_tab_default_background"
+            android:drawableTop="@drawable/maintab_setting_selected"
+            android:gravity="center_horizontal"
+            android:text="@string/main_tab_setting"
+            android:textColor="@color/text_color_light" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignTop="@id/list_tab"
+        android:layout_below="@+id/container"
+        android:layout_centerHorizontal="true" 
+        android:background = "@drawable/bg">
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/pathlabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/selectPathButton"
+            android:layout_marginLeft="31dp"
+            android:layout_marginTop="48dp"
+            android:text="Root Path: "
+            android:textColor="#ff487346"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/selectPathButton"
+            style="@style/ButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/btn_blue"
+            android:text="Update Root Path"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/rootpath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pathlabel"
+            android:layout_centerHorizontal="true"
+            android:text="/"
+            android:textColor="#9f1c2038"
+            android:textSize="25sp"
+            android:textStyle="bold|italic" />
+
+    </RelativeLayout>
+
+</LinearLayout>
