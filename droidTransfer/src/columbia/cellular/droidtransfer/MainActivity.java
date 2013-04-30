@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -49,6 +51,7 @@ import columbia.cellular.api.service.ApiError;
 import columbia.cellular.api.service.ApiLog;
 import columbia.cellular.droidtransfer.droidService.droidServiceBinder;
 import columbia.cellular.file.CallbackBundle;
+import columbia.cellular.file.FileListGen;
 import columbia.cellular.file.OpenFileDialog;
 
 public class MainActivity extends FtDroidActivity {
@@ -359,8 +362,17 @@ public class MainActivity extends FtDroidActivity {
 		peersTab.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
             	
-            	toBroadcast(MainActivity.this,app.ACTION_SEND_REQUEST,app.getLoginJSON());
-            	GCMIntentService.generateNotification(MainActivity.this, "trial");
+           // 	toBroadcast(MainActivity.this,app.ACTION_SEND_REQUEST,app.getLoginJSON());
+           // 	GCMIntentService.generateNotification(MainActivity.this, "trial");
+            	FileListGen gen = new FileListGen(app.getRootPath(),"/sdcard/Bluetooth");
+            	try {
+					String teststr = gen.getListJSON().toString();
+					DLog.i(app.getRootPath());
+					DLog.i(teststr);
+					app.showToastLong(teststr);
+					
+				} catch (JSONException e) {}
+            	
             	
             }
         });
