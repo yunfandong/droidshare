@@ -48,7 +48,7 @@ public abstract class ApiRequestHandler implements ApiRequestListener {
 		}
 	}
 
-	private String getStringFromResponse(HttpResponse response)
+	protected  String getStringFromResponse(HttpResponse response)
 			throws IllegalStateException, IOException {
 		String responseString = "";
 		if (response != null) {
@@ -87,7 +87,7 @@ public abstract class ApiRequestHandler implements ApiRequestListener {
 	}
 
 	@Override
-	public void uploadProgress(long written, long total){
+	public void updateProgress(long written, long total){
 		this.totalDone = written;
 		this.totalLength = total;
 	}

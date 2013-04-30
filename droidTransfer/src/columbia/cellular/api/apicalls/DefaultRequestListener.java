@@ -14,10 +14,13 @@ public class DefaultRequestListener extends ApiRequestHandler {
 	}
 	
 	@Override
-	public void uploadProgress(long written, long total) {
+	public void updateProgress(long written, long total) {
 		// TODO Auto-generated method stub
-		super.uploadProgress(written, total);
+		super.updateProgress(written, total);
 		if(requestTask != null){
+			requestTask.publishProgressExt(this);
 		}
 	}
+
+
 }

@@ -27,21 +27,21 @@ public class OutputStreamProgress extends OutputStream {
     public void write(int b) throws IOException {
         outstream.write(b);
         bytesWritten++;
-        requestListener.uploadProgress(bytesWritten, contentLength);
+        requestListener.updateProgress(bytesWritten, contentLength);
     }
 
     @Override
     public void write(byte[] b) throws IOException {
         outstream.write(b);
         bytesWritten += b.length;
-        requestListener.uploadProgress(bytesWritten, contentLength);
+        requestListener.updateProgress(bytesWritten, contentLength);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         outstream.write(b, off, len);
         bytesWritten += len;
-        requestListener.uploadProgress(bytesWritten, contentLength);
+        requestListener.updateProgress(bytesWritten, contentLength);
     }
 
     @Override
