@@ -198,7 +198,7 @@ public class OpenFileDialog {
 			for(File file: files)
 			{
 				if(file.isDirectory() && file.listFiles()!=null){
-					// 添加文件夹
+					// add a folder
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("name", file.getName());
 					map.put("path", file.getPath());
@@ -206,7 +206,7 @@ public class OpenFileDialog {
 					lfolders.add(map);
 				}
 				else if(file.isFile()){
-					// 添加文件
+					// add a file
 					String sf = getSuffix(file.getName()).toLowerCase();
 					
 				//	if(suffix == null || suffix.length()==0 || (sf.length()>0 && suffix.indexOf("."+sf+";")>=0)){
