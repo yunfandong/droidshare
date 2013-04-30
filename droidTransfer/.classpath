@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/android-support-v4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/fluent-hc-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/gcm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/httpclient-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/httpclient-cache-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/httpcore-4.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/workspace/droidTransfer/libs/httpmime-4.2.5.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/fluent-hc-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/gcm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpclient-cache-4.2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpmime-4.2.5.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
