@@ -4,14 +4,14 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/android-support-v4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/fluent-hc-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/gcm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpclient-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpclient-cache-4.2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpcore-4.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/intelWorX/android.dev/droidshare/droidTransfer/libs/httpmime-4.2.5.jar"/>
+	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="libs/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="libs/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/fluent-hc-4.2.5.jar"/>
+	<classpathentry kind="lib" path="libs/gcm.jar"/>
+	<classpathentry kind="lib" path="libs/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="libs/httpclient-cache-4.2.5.jar"/>
+	<classpathentry kind="lib" path="libs/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="libs/httpmime-4.2.5.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

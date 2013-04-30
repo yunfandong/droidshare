@@ -1,15 +1,25 @@
 package columbia.cellular.droidtransfer;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
-import com.google.android.gcm.GCMRegistrar;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 import columbia.cellular.Utils.DLog;
-import columbia.cellular.Utils.IpUtils;
-import columbia.cellular.Utils.ServerUtilities;
 import columbia.cellular.api.apicalls.PairList;
 import columbia.cellular.api.apicalls.Register;
 import columbia.cellular.api.entities.Device;
@@ -20,26 +30,7 @@ import columbia.cellular.api.service.ApiEntity;
 import columbia.cellular.api.service.ApiError;
 import columbia.cellular.api.service.ApiLog;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.text.format.Formatter;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.gcm.GCMRegistrar;
 
 public class LoginActivity extends FtDroidActivity {
 
@@ -71,18 +62,10 @@ public class LoginActivity extends FtDroidActivity {
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 		app = (droidApp) getApplication();
 
-		final String ip = IpUtils.getIPAddress(false);
-		; // true: IPv4 false:IPv6
 		initGCM();
 
 		if (isRegistered()) {
-			// Toast.makeText(this,
-			// "Device is already registered"+getRegisteredDevice().toString(),
-			// Toast.LENGTH_LONG).show();
-			// testPairWith();
-			// testPairResponse();
-			// testPairDelete();
-			// testPairList();
+			
 			DLog.i("Registered!");
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
