@@ -1,32 +1,23 @@
 package columbia.cellular.droidtransfer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import columbia.cellular.Utils.DLog;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
+import columbia.cellular.Utils.DLog;
 
 public class droidApp extends Application{
 	public boolean isServiceRegistered = false;
-	public String myNickName=null;
-	public String myEmail=null;
-	public String myIMEI=null;
-	public String myRootPath=null;
 	public boolean isNameSet = false;
-	public String regId=null;
+	
+	private HashMap<String, Object> registry;
 	
 	/**
      * Base URL of the Demo Server (such as http://my_host:8080/gcm-demo)
      */
-    public static final String SERVER_URL = "http://localhost:8080/gcm-demo";
 
     /**
      * Google API project id registered to use GCM.
@@ -35,11 +26,12 @@ public class droidApp extends Application{
 	
 	private Handler mainHandler;
 	public String ACTION_SEND_REQUEST ="action_send_request";
-	public int RESPONSE_MESSAGE = 0;
+	public static int RESPONSE_MESSAGE = 0;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		registry = new HashMap<String, Object>();
 		DLog.i("Application Started");
 	}
 	
@@ -59,34 +51,6 @@ public class droidApp extends Application{
 		this.isServiceRegistered = s;
 	}
 	
-	public void setNickName (String name){
-		this.myNickName = name;
-	}
-	public String getNickName(){
-		return this.myNickName;
-	}
-	
-	public void setEmail(String email){
-		this.myEmail=email;
-	}
-	public String getEmail (){
-		return this.myEmail;
-	}
-	
-	public void setIMEI(String imei){
-		this.myIMEI=imei;
-	}
-	public String getIMEI (){
-		return this.myIMEI;
-	}
-	
-	public void setRootPath(String root){
-		this.myRootPath=root;
-	}
-	public String getRootPath(){
-		return this.myRootPath;
-	}
-	
 	public void SetNameFlag (boolean b){
 		this.isNameSet = b;
 	}
@@ -100,62 +64,31 @@ public class droidApp extends Application{
 		this.mainHandler = handler;
 	}
 	
-	public void setRegId(String id){
-		this.regId = id;
-	}
-	
-	public String getRegId(){
-		return this.regId;
-	}
-	
 	public void sendMessageToHandler(Message msg) {
 		if (mainHandler != null) {
 			mainHandler.sendMessage(msg);
 		}
 	}
 	
+
 	
-	public String getLoginJSON(){
-		JSONObject a = new JSONObject();
-		
-    	return a.toString();	
+	public void writeAnything(String any){
+		Log.i("Anything", "Anything "+any);
 	}
 	
-	public String makeLoginResponseJSON(List<Map<String,Object>> list) throws JSONException{
-		
-		/*The input list is supposed to be a list of users:
-		 * for a user ,the map contains: "username" & "userstate"
-		 * */
-		String json="";
-		JSONObject responseJSON = new JSONObject();
-		JSONArray users = new JSONArray();
-		
-		for(Map<String,Object> map : list){
-			JSONObject singleJSON = new JSONObject();
-			//singleJSON.append("nickname", map.get("nickname"));
-			//singleJSON.append("email", map.get("email"));
-			//singleJSON.append("state",map.get("state") );
-			responseJSON.accumulate("users", singleJSON);
-		}
-		
-		return json;
+	public void saveToRegistry(String key, Object object){
+		registry.put(key, object);
 	}
 	
-	public List<Map<String,Object>> parseLoginResponseJSON (String json) throws JSONException{
-		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-		JSONObject responseJSON = new JSONObject(json);
-		JSONArray users = responseJSON.getJSONArray("users");
-		
-		for (int i=0;i<users.length();i++){
-			JSONObject user = users.getJSONObject(i);
-			Map<String,Object> map = new HashMap<String,Object>();
-			map.put("nickename", user.get("nickname"));
-			map.put("email", user.get("email"));
-			map.put("state", user.get("state"));
-			list.add(map);	
+	public Object getFromRegistry(String key, Object defaultVal){
+		if(registry.containsKey(key)){
+			return registry.get(key);
 		}
-		
-		return list;
+		return defaultVal;
+	}
+	
+	public Object getFromRegistry(String key){
+		return getFromRegistry(key, null);
 	}
 
 }

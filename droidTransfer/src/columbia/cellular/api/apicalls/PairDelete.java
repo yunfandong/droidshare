@@ -1,10 +1,10 @@
 package columbia.cellular.api.apicalls;
 
 import columbia.cellular.api.entities.Device;
-import columbia.cellular.api.entities.FtDroidActivity;
 import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiServerConnector;
+import columbia.cellular.droidtransfer.FtDroidActivity;
 
 
 public class PairDelete extends PairWith {

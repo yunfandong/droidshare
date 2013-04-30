@@ -1,11 +1,15 @@
-package columbia.cellular.api.entities;
+package columbia.cellular.droidtransfer;
 
+import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.service.ApiEntity;
 import columbia.cellular.api.service.ApiError;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Environment;
 
 public abstract class FtDroidActivity extends ListActivity {
 	
@@ -14,6 +18,7 @@ public abstract class FtDroidActivity extends ListActivity {
 	public static final String PREF_DEVICE_ID = "id";
 	public static final String PREF_GCM_REGISTRATION_ID = "gcm_reg_id";
 	public static final String PREF_EMAIL_ADDRESS = "email";
+	public static final String PREF_ROOT_PATH = "rootPath";
 	public static final String PREFS_DEVICE = "devicePreferences";
 	public static final String PREFS_SETTINGS = "deviceSettings";
 	private Device device;
@@ -73,6 +78,34 @@ public abstract class FtDroidActivity extends ListActivity {
 
 	public abstract void entityReceived(ApiEntity entity);
 	public abstract void handleError(ApiError[] errors, ApiEntity entity);
+	protected void createDefaultSettings(){
+		String rootPath = getSetting(PREF_ROOT_PATH, "");
+		if(rootPath.length() < 1){
+			rootPath = Environment.getExternalStorageDirectory().getPath();
+			if(rootPath.length() < 1){
+				rootPath = Environment.getRootDirectory().getPath();                                                                                                                                                                                                                                                                                                                                                                                                                                         
+			}
+			saveSetting(PREF_ROOT_PATH, Environment.getExternalStorageDirectory().getPath());
+		}
+	}
 	
+	protected void _handleErrorsGeneric(ApiError[] errors, ApiEntity entity){
+		if (errors != null) {
+			String errorMessages = "";
+			for (ApiError e : errors) {
+				errorMessages += "\n" + e.getErrorMessage();
+			}
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(errorMessages).setTitle(R.string.error_dialog_title);
+			builder.setPositiveButton(android.R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+
+						}
+					});
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+	}
 }
 

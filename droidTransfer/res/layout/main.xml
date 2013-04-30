@@ -37,12 +37,48 @@
         
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/pair_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="138dp"
+        android:height="@dimen/default_text_field_height"
+        android:padding="@dimen/default_text_field_padding"
+        android:text="@string/pair_list_empty"
+        android:textColor="@color/text_color_dark"
+        android:textStyle="italic"
+        android:visibility="visible" />
+
     <LinearLayout
+        android:id="@+id/login_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/login_status_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/login_progress_signing_in"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pairListLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_alignTop="@id/list_tab"
         android:layout_below="@+id/container"
         android:layout_centerHorizontal="true"
-        android:layout_alignTop="@id/list_tab"
         android:orientation="vertical" >
 
         <ListView

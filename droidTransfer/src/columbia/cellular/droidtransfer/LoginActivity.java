@@ -2,9 +2,7 @@ package columbia.cellular.droidtransfer;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,7 +18,6 @@ import android.widget.Toast;
 import columbia.cellular.Utils.DLog;
 import columbia.cellular.api.apicalls.Register;
 import columbia.cellular.api.entities.Device;
-import columbia.cellular.api.entities.FtDroidActivity;
 import columbia.cellular.api.service.ApiEntity;
 import columbia.cellular.api.service.ApiError;
 
@@ -50,6 +47,7 @@ public class LoginActivity extends FtDroidActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		createDefaultSettings();
 		instance = this;
 		setContentView(R.layout.login);
 
@@ -64,12 +62,8 @@ public class LoginActivity extends FtDroidActivity {
 
 		registrationId = deviceProperty(PREF_GCM_REGISTRATION_ID, "");
 		if (registrationId.length() < 1) {
-			DLog.i("Starting to register GCM...");
+			//DLog.i("Starting to register GCM...");
 			initGCM();
-			//mLoginStatusMessageView.setText(R.string.app_initializing);
-			//showProgress(true);
-		} else {
-			DLog.i("registered : " + registrationId);
 		}
 
 
@@ -199,24 +193,19 @@ public class LoginActivity extends FtDroidActivity {
 	public void handleError(ApiError[] errors, ApiEntity entity) {
 		// TODO Auto-generated method stub
 		showProgress(false);
-		if (errors != null) {
-			String errorMessages = "";
-			for (ApiError e : errors) {
-				errorMessages += "\n" + e.getErrorMessage();
-			}
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(errorMessages).setTitle("Errors Occured");
-			builder.setPositiveButton(android.R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-
-						}
-					});
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		}
-		// Toast.makeText(this, "An exception occured",
-		// Toast.LENGTH_LONG).show();
+		_handleErrorsGeneric(errors, entity);
 	}
 
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if (isRegistered()) {
+			DLog.i("Registered!");
+			startActivity(new Intent(LoginActivity.this, MainActivity.class));
+		}
+		
+		
+	}
+	
 }

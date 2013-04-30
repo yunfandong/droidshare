@@ -1,46 +1,48 @@
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_cell" >
 
         <TextView
-            android:id="@+id/userId"
-            android:layout_width="wrap_content"
+            android:id="@+id/label_nickname"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="TextView"
-            android:textSize="22px" />
+            android:text="@string/holder_nickname"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/userState"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp"
-            android:layout_alignBaseline="@+id/textView1"
-            android:layout_alignBottom="@+id/textView1"
-            android:layout_centerInParent="true"
-            android:gravity="center_vertical"
-            android:text="online"
-            android:textSize="12px" />
-
-        <Button
-            android:id="@+id/connectButton"
-            style="@style/ButtonText"
-            android:layout_width="wrap_content"
+            android:id="@+id/label_pairemail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/btn_blue"
-            android:text="connect"
-            android:textSize="10sp" />
+            android:text="TextView" />
 
-        <ImageView
-            android:id="@+id/state"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/userState"
-            android:layout_alignTop="@+id/userState"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/userState"
-            android:src="@drawable/circle_green" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/label_last_seen"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.84"
+                android:gravity="center_vertical"
+                android:text="@string/last_seen"
+                android:textSize="@dimen/small_text"
+                android:width="0dp" />
+
+            <Button
+                android:id="@+id/connectButton"
+                style="@style/ButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_blue"
+                android:minHeight="@dimen/default_text_field_padding"
+                android:text="@string/pair_open"
+                android:textSize="@dimen/small_text" />
+
+        </LinearLayout>
+
+    </LinearLayout>

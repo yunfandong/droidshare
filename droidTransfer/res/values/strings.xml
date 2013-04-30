@@ -25,6 +25,13 @@
     <string name="options_unregister">Unregister</string>
     <string name="options_clear">Clear</string>
     <string name="options_exit">Exit</string>
+    <string name="default_root">/</string>
+    <string name="loading">Loading...</string>
+    <string name="error_dialog_title">Errors Occured</string>
+    <string name="pair_list_empty">You are not currently paired with any device. To add a new device, click menu -&gt; add a device</string>
+    <string name="pair_open">Open</string>
+    <string name="holder_nickname">Nickname</string>
+    <string name="last_seen">last seen</string>
     
 
 </resources>

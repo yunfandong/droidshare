@@ -8,7 +8,7 @@
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/pair_nickname"
+                android:id="@+id/label_nickname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nick Name"

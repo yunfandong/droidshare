@@ -4,11 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import columbia.cellular.api.entities.Device;
-import columbia.cellular.api.entities.FtDroidActivity;
 import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
+import columbia.cellular.droidtransfer.FtDroidActivity;
 
 public class GcmUpdate extends ApiCall {
 

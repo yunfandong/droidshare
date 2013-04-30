@@ -1,7 +1,7 @@
 package columbia.cellular.api.apicalls;
 
-import columbia.cellular.api.entities.FtDroidActivity;
 import columbia.cellular.api.service.ApiServerConnector;
+import columbia.cellular.droidtransfer.FtDroidActivity;
 
 public class GetFile extends GetFileList {
 	
