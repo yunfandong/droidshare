@@ -222,6 +222,12 @@ public class MainActivity extends FtDroidActivity {
 				startActivity(i);
 			}
 		});
+		
+		peersTab.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				showPairingInfo();
+			}
+		});
 		// allow MultiThreaded
 
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
@@ -253,6 +259,28 @@ public class MainActivity extends FtDroidActivity {
 									int which) {
 								DLog.i("Add Device!!");
 								showAddDeviceInfo();
+							}
+						}).show();
+
+		pairListStatus.setVisibility(View.VISIBLE);
+	}
+	
+	public void showPairingInfo() {
+		new AlertDialog.Builder(this)
+				.setTitle("Pairing")
+				.setMessage("Dong Yunfan wants to pair with you, do you agree?")
+				.setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				})
+				.setNegativeButton("Decline",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								DLog.i("Add Device!!");
+							//	showAddDeviceInfo();
 							}
 						}).show();
 

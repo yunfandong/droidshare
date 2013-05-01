@@ -101,8 +101,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			ApiLog.e("Cannot interprete received message...", e);
 		}
 
-		DLog.i("Message Received Object" + message);
-		generateNotification(context, msgNotify);
+		//DLog.i("Message Received Object" + message);
+		//generateNotification(context, msgNotify);
 	}
 
 	protected void _handleMessage(DeviceMessage message) {
@@ -231,6 +231,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	private void _handlePairingAccepted(DeviceMessage message) {
 		// notify
+		String notifyMessage = String.format("%s (%s) accepted your pairing request.",
+				message.getSender().getNickname(), message.getSender()
+						.getEmail());
+		
+		generateNotification(applicationContext, notifyMessage);
+
 	}
 
 	@Override
