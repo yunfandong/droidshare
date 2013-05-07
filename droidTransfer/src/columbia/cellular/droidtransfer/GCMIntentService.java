@@ -101,8 +101,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			ApiLog.e("Cannot interprete received message...", e);
 		}
 
-		DLog.i("Message Received Object" + message);
-		generateNotification(context, msgNotify);
+		//DLog.i("Message Received Object" + message);
+		//generateNotification(context, msgNotify);
 	}
 
 	protected void _handleMessage(DeviceMessage message) {
@@ -135,28 +135,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	@SuppressWarnings("deprecation")
 	private void _handlePairRequest(DeviceMessage message) {
-		DLog.i("Handling ... Pair Request");
-		NotificationManager notificationManager = (NotificationManager) applicationContext
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification note = new Notification(android.R.drawable.dialog_frame,
-				"App Notification", System.currentTimeMillis());
-		Intent notificationIntent = new Intent(applicationContext,
-				MainActivity.class);
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent pendingIntent = PendingIntent.getActivity(
-				applicationContext, 0, notificationIntent, 0);
 		String notifyMessage = String.format("%s (%s) wants to pair with you.",
 				message.getSender().getNickname(), message.getSender()
 						.getEmail());
-		note.setLatestEventInfo(applicationContext, "App Notification",
-				notifyMessage, pendingIntent);
-		note.number = count++;
-		note.defaults |= Notification.DEFAULT_SOUND;
-		note.defaults |= Notification.DEFAULT_VIBRATE;
-		note.defaults |= Notification.DEFAULT_LIGHTS;
-		note.flags |= Notification.FLAG_AUTO_CANCEL;
-		notificationManager.notify(0, note);
+		generateNotification(applicationContext, notifyMessage);
 	}
 
 	private void _handleSendFileList(DeviceMessage message) {
