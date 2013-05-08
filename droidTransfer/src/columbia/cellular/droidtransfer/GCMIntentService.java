@@ -42,28 +42,29 @@ public class GCMIntentService extends GCMBaseIntentService {
 	int count = 0;
 	private static final String TAG = "GCMIntentService";
 	public static final String SENDER_ID = "178896580049";
+	protected DroidApp application;
 
 	private Context applicationContext;
 
 	public GCMIntentService() {
 		super(SENDER_ID);
+		application = (DroidApp) getApplication();
 	}
 
 	@Override
 	protected void onRegistered(Context context, String registrationId) {
 		DLog.i("Device registered: regId = " + registrationId);
 		DLog.i("ID length:" + registrationId.length());
-		SharedPreferences pref = getSharedPreferences(
-				FtDroidActivity.PREFS_DEVICE, Activity.MODE_PRIVATE);
+		SharedPreferences pref = getSharedPreferences(DroidApp.PREFS_DEVICE,
+				Activity.MODE_PRIVATE);
 		Editor prefEditor = pref.edit();
-		prefEditor.putString(FtDroidActivity.PREF_GCM_REGISTRATION_ID,
-				registrationId);
+		prefEditor.putString(DroidApp.PREF_GCM_REGISTRATION_ID, registrationId);
 		prefEditor.commit();
 		if (LoginActivity.instance != null) {
 			LoginActivity.instance.registrationReceived(registrationId);
 			DLog.i("Updating on the server...");
-			if (LoginActivity.instance.isRegistered()) {
-				GcmUpdate updateGcm = new GcmUpdate(LoginActivity.instance);
+			if (application.isRegistered()) {
+				GcmUpdate updateGcm = new GcmUpdate(application);
 				updateGcm.update(registrationId);
 			}
 		}
@@ -101,8 +102,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 			ApiLog.e("Cannot interprete received message...", e);
 		}
 
-		//DLog.i("Message Received Object" + message);
-		//generateNotification(context, msgNotify);
+		// DLog.i("Message Received Object" + message);
+		// generateNotification(context, msgNotify);
 	}
 
 	protected void _handleMessage(DeviceMessage message) {
@@ -112,7 +113,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		DLog.i("Message Content is : "+messageContent);
+		DLog.i("Message Content is : " + messageContent);
 		if (messageContent.equals(MSG_FILE_LIST_REQUEST)) {
 			_handleSendFileList(message);
 		} else if (messageContent.equals(MSG_FILE_REQUEST)) {
@@ -133,7 +134,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		// refresh the stuff
 	}
 
-	@SuppressWarnings("deprecation")
 	private void _handlePairRequest(DeviceMessage message) {
 		String notifyMessage = String.format("%s (%s) wants to pair with you.",
 				message.getSender().getNickname(), message.getSender()
@@ -149,26 +149,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 
 		DLog.i("Handling send file list");
-		if (MainActivity.getInstance() != null) {
-			DLog.i("Found a main activity");
-			SendFileList sender = new SendFileList(MainActivity.getInstance());
-			String rootPath = MainActivity.getInstance().getSetting(
-					FtDroidActivity.PREF_ROOT_PATH, "");
-			FileListGen fileListGen = new FileListGen(rootPath, path);
-			String error = null;
-			JSONObject fileListJson = null;
-			try {
-				fileListJson = fileListGen.getListJSON();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				error = e.getMessage();
-			}
-
-			error = fileListGen.getErrorMessage();
-			sender.setReturnEvents(false);
-			sender.send(path, fileListJson, message.getMessageID(), error);
+		SendFileList sender = new SendFileList(application);
+		String rootPath = application.getSetting(DroidApp.PREF_ROOT_PATH, "");
+		FileListGen fileListGen = new FileListGen(rootPath, path);
+		String error = null;
+		JSONObject fileListJson = null;
+		try {
+			fileListJson = fileListGen.getListJSON();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			error = e.getMessage();
 		}
-		
+
+		error = fileListGen.getErrorMessage();
+		sender.setReturnEvents(false);
+		sender.send(path, fileListJson, message.getMessageID(), error);
 	}
 
 	private void _handleSendFile(DeviceMessage message) {
@@ -178,33 +173,30 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		if (MainActivity.getInstance() != null) {
-			String rootPath = MainActivity.getInstance().getSetting(
-					FtDroidActivity.PREF_ROOT_PATH, "");
-			String fullPath = rootPath + path;
-			String error = null;
-			File fileToSend = new File(fullPath);
-			if (!fileToSend.exists()) {
-				error = "File was not found";
-			}
-
-			if (fileToSend.isDirectory()) {
-				error = "Path is not that of a file";
-			}
-
-			if (!fileToSend.canRead()) {
-				error = "Read access denied";
-			}
-
-			if (error != null) {
-				fileToSend = null;
-			}
-
-			SendFile fileSender = new SendFile(MainActivity.getInstance());
-			fileSender.setReturnEvents(false);
-			// @TODO create the upload progress bar
-			fileSender.send(message.getMessageID(), path, fileToSend, error);
+		String rootPath = application.getSetting(DroidApp.PREF_ROOT_PATH, "");
+		String fullPath = rootPath + path;
+		String error = null;
+		File fileToSend = new File(fullPath);
+		if (!fileToSend.exists()) {
+			error = "File was not found";
 		}
+
+		if (fileToSend.isDirectory()) {
+			error = "Path is not that of a file";
+		}
+
+		if (!fileToSend.canRead()) {
+			error = "Read access denied";
+		}
+
+		if (error != null) {
+			fileToSend = null;
+		}
+
+		SendFile fileSender = new SendFile(application);
+		fileSender.setReturnEvents(false);
+		// @TODO create the upload progress bar
+		fileSender.send(message.getMessageID(), path, fileToSend, error);
 	}
 
 	private void _handlePairingRejected(DeviceMessage message) {
@@ -213,10 +205,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	private void _handlePairingAccepted(DeviceMessage message) {
 		// notify
-		String notifyMessage = String.format("%s (%s) accepted your pairing request.",
-				message.getSender().getNickname(), message.getSender()
-						.getEmail());
-		
+		String notifyMessage = String.format(
+				"%s (%s) accepted your pairing request.", message.getSender()
+						.getNickname(), message.getSender().getEmail());
+
 		generateNotification(applicationContext, notifyMessage);
 
 	}

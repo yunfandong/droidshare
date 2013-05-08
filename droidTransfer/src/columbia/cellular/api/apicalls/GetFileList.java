@@ -6,19 +6,19 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 
 public class GetFileList extends ApiCall {
 	
 	
-	protected String apiEndPoint = ApiServerConnector.API_URL_GET_FILE_LIST;
-	
-	public GetFileList(FtDroidActivity activity) {
-		super(activity);
+	public GetFileList(DroidApp application) {
+		super(application);
 		// TODO Auto-generated constructor stub
 	}
+	protected String apiEndPoint = ApiServerConnector.API_URL_GET_FILE_LIST;
+	
 	
 	public void get(Device device, String path, boolean forceReload){
 		String nickname = device.getNickname();

@@ -10,12 +10,14 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 public class Messages extends ApiCall {
 
-	public Messages(FtDroidActivity activity) {
-		super(activity);
+
+	public Messages(DroidApp application) {
+		super(application);
+		// TODO Auto-generated constructor stub
 	}
 
 	public void poll(long reply_to, long since_ts) {
@@ -45,22 +47,25 @@ public class Messages extends ApiCall {
 	@Override
 	public void responseReceived(ApiResponse apiResponse) {
 		JSONObject responseJson = apiResponse.getJsonResponse();
+		if(handler == null){
+			return;
+		}
+		
 		if (responseJson.has("messages") && !responseJson.isNull("messages")) {
 			try {
 				JSONArray messages = responseJson.getJSONArray("messages");
 				int limit = responseJson.has("limit") ? responseJson.getInt("limit") : 0;
 				int offset = responseJson.has("offset") ? responseJson.getInt("offset") : 0;
-				
 				DeviceMessageList messageList  = new DeviceMessageList(messages, limit, offset);
-				androidActivity.entityReceived(messageList);
+				handler.entityReceived(messageList);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				ApiLog.e("JSONException : " + e.getMessage());
-				androidActivity.handleError(null, null);
+				handler.handleError(null, null);
 			}
 
 		} else {
-			androidActivity.handleError(null, null);
+			handler.handleError(null, null);
 		}
 	}
 

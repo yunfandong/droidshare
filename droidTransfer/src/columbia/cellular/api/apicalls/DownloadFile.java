@@ -7,18 +7,19 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 
 public class DownloadFile extends ApiCall {
 
-	public DownloadFile(FtDroidActivity activity) {
-		super(activity);
+
+	
+	public DownloadFile(DroidApp application) {
+		super(application);
 		// TODO Auto-generated constructor stub
 	}
 
-	
 	public void startDownload(long fileID, File outFile){
 		apiRequest = new ApiRequestWrapper(ApiServerConnector.API_URL_DOWNLOAD_FILE);
 		apiRequest.setListener(new FileDownloadRequestListerner(outFile));
@@ -29,7 +30,9 @@ public class DownloadFile extends ApiCall {
 	@Override
 	public void responseReceived(ApiResponse apiResponse) {
 		// TODO Auto-generated method stub
-		androidActivity.entityReceived(null);
+		if(handler != null){
+			handler.entityReceived(null);
+		}
 	}
 	
 	@Override

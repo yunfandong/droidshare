@@ -7,13 +7,15 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 public class SendFile extends ApiCall {
 
-	public SendFile(FtDroidActivity activity) {
-		super(activity);
+
+	public SendFile(DroidApp application) {
+		super(application);
+		// TODO Auto-generated constructor stub
 	}
 
 	public void send(long in_reply_to, String path, File requestedFile, String errorMessage) {

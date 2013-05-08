@@ -6,14 +6,18 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
+
+
 public class SendFileList extends ApiCall{
 
 	
-	public SendFileList(FtDroidActivity activity) {
-		super(activity);
-	}
 	
+	public SendFileList(DroidApp application) {
+		super(application);
+		// TODO Auto-generated constructor stub
+	}
+
 	public void send(String path, JSONObject fileList, long in_reply_to, String errorMessage){
 		apiRequest = new ApiRequestWrapper(ApiServerConnector.API_URL_SEND_FILE_LIST);
 		String fileListJson = fileList == null ? "{}" : fileList.toString();

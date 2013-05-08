@@ -8,12 +8,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,18 +34,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import columbia.cellular.Utils.DLog;
+import columbia.cellular.api.apicalls.ActivityApiResponseHandlerAbstract;
 import columbia.cellular.api.apicalls.PairList;
 import columbia.cellular.api.apicalls.PairWith;
 import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.entities.DeviceList;
-import columbia.cellular.api.entities.DeviceMessage;
 import columbia.cellular.api.service.ApiEntity;
 import columbia.cellular.api.service.ApiError;
 import columbia.cellular.droidtransfer.droidService.droidServiceBinder;
 import columbia.cellular.file.CallbackBundle;
 import columbia.cellular.file.OpenFileDialog;
 
-public class MainActivity extends FtDroidActivity {
+public class MainActivity extends ListActivity {
 
 	private TextView uploadTab;
 	private TextView peersTab;
@@ -55,7 +55,7 @@ public class MainActivity extends FtDroidActivity {
 	private TextView loadStatusMessageView;
 	private TextView pairListStatus;
 
-	public droidApp app;
+	public DroidApp app;
 	public droidService myService;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
@@ -63,7 +63,6 @@ public class MainActivity extends FtDroidActivity {
 	MyAdapter adapter;
 	protected DeviceList listOfPairs;
 	private static MainActivity instance;
-	private static boolean suppressErrors = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,28 +70,40 @@ public class MainActivity extends FtDroidActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		instance = this;
-		app = (droidApp) getApplication();
-		// init
+		app = (DroidApp) getApplication();
 		initViews();
 		initMainHandler();
 		// initGCM();
 		loadStatusMessageView.setText(R.string.loading);
-		Device regDev = getRegisteredDevice();
+		Device regDev = app.getRegisteredDevice();
 		app.showToast("Welcome  " + regDev.getNickname());
-		// DLog.i("Device info:"+regDev.toString());
-		// get peerList
-		// peerList = initList();
-		// if (peerList.size() > 0) {
-		// adapter = new MyAdapter(this);
-		// setListAdapter(adapter);
-		// }
 		loadPairList();
 	}
 
 	protected void loadPairList() {
 		// try local else
 		showProgress(true);
-		PairList pairListLoader = new PairList(this);
+		PairList pairListLoader = new PairList(app);
+		pairListLoader.setResponseHandler(new ActivityApiResponseHandlerAbstract(this) {
+			
+			@Override
+			public void handleError(ApiError[] errors, ApiEntity entity) {
+				showProgress(false);
+				_handleErrorsGeneric(errors, entity);
+			}
+			
+			@Override
+			public void entityReceived(ApiEntity entity) {
+				showProgress(false);
+				listOfPairs = (DeviceList) entity;
+				if (listOfPairs.size() == 0) {
+					showInfo();
+				} else {
+					pairListStatus.setVisibility(View.GONE);
+					updateListView();
+				}
+			}
+		});
 		pairListLoader.getPairList();
 	}
 
@@ -139,7 +150,7 @@ public class MainActivity extends FtDroidActivity {
 	private static class MainHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == droidApp.RESPONSE_MESSAGE) {
+			if (msg.what == DroidApp.RESPONSE_MESSAGE) {
 				Bundle bundle = msg.getData();
 				String data = bundle.getString("data");
 				DLog.i("MainActivity Receives Response :" + data);
@@ -416,38 +427,28 @@ public class MainActivity extends FtDroidActivity {
 	}
 
 	public void doPairWith(String device) {
-		PairWith pairWith = new PairWith(this);
+		PairWith pairWith = new PairWith(app);
+		pairWith.setResponseHandler(
+				new ActivityApiResponseHandlerAbstract(this) {
+					@Override
+					public void handleError(ApiError[] errors, ApiEntity entity) {
+						// TODO Auto-generated method stub
+						showProgress(false);
+						_handleErrorsGeneric(errors, entity);
+					}
+					
+					@Override
+					public void entityReceived(ApiEntity entity) {
+						showProgress(false);
+						app.showToast("Pairing request has been sent.");
+					}
+				}
+		);
 		pairWith.pairWith(new Device(device, ""));
 		DLog.i("Pair Request Sent :" + device);
 		// app.showToast("Pair Request Sent (" + device + ")");
 	}
 
-	@Override
-	public void entityReceived(ApiEntity entity) {
-		showProgress(false);
-		if (entity.getClass() == DeviceList.class) {
-			listOfPairs = (DeviceList) entity;
-			if (listOfPairs.size() == 0) {
-				showInfo();
-			} else {
-				pairListStatus.setVisibility(View.GONE);
-				updateListView();
-			}
-		} else if (entity.getClass() == DeviceMessage.class) {
-			((droidApp) getApplication())
-					.showToast("Pairing request has been sent.");
-		} else {
-			((droidApp) getApplication()).showToast("Unknown message.");
-		}
-
-	}
-
-	@Override
-	public void handleError(ApiError[] errors, ApiEntity entity) {
-		// TODO Auto-generated method stub
-		showProgress(false);
-		_handleErrorsGeneric(errors, entity);
-	}
 
 	protected void showProgress(final boolean show) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -481,10 +482,6 @@ public class MainActivity extends FtDroidActivity {
 			pairListView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 
-	}
-
-	public void setSuppressErrors(boolean b) {
-		suppressErrors = b;
 	}
 
 	public static MainActivity getInstance(){

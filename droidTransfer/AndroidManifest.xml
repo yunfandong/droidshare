@@ -9,7 +9,7 @@
         android:targetSdkVersion="16" />
 
     <application
-        android:name="columbia.cellular.droidtransfer.droidApp"
+        android:name="columbia.cellular.droidtransfer.DroidApp"
         android:allowBackup="true"
         android:allowTaskReparenting="true"
         android:icon="@drawable/ic_launcher"

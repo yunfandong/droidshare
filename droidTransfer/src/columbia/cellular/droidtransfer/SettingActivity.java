@@ -2,7 +2,7 @@ package columbia.cellular.droidtransfer;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,14 +12,12 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
 import columbia.cellular.Utils.DLog;
-import columbia.cellular.api.service.ApiEntity;
-import columbia.cellular.api.service.ApiError;
 import columbia.cellular.file.CallbackBundle;
 import columbia.cellular.file.OpenFileDialog;
 import columbia.cellular.file.SelectRootDialog;
 
-public class SettingActivity extends FtDroidActivity {
-	droidApp app;
+public class SettingActivity extends Activity {
+	DroidApp app;
 
 	TextView uploadTab;
 	TextView peersTab;
@@ -32,8 +30,7 @@ public class SettingActivity extends FtDroidActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
-		createDefaultSettings();
-		rootPath = getSetting(PREF_ROOT_PATH, "");
+		rootPath = ((DroidApp) getApplication()).getSetting(DroidApp.PREF_ROOT_PATH, "");
 		// DLog.i("Setup Activity Start  id: " + userId + "  email: " + email);
 		initViews();
 	}
@@ -68,7 +65,7 @@ public class SettingActivity extends FtDroidActivity {
 	private void updatePath(String path) {
 		TextView text = (TextView) findViewById(R.id.rootpath);
 		text.setText(path);
-		saveSetting(PREF_ROOT_PATH, path);
+		((DroidApp) getApplication()).saveSetting(DroidApp.PREF_ROOT_PATH, path);
 		rootPath = path;
 	}
 
@@ -128,14 +125,5 @@ public class SettingActivity extends FtDroidActivity {
 
 	}
 
-	@Override
-	public void entityReceived(ApiEntity entity) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void handleError(ApiError[] errors, ApiEntity entity) {
-		// TODO Auto-generated method stub
-	}
 
 }

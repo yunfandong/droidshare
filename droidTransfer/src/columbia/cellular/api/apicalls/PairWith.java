@@ -10,14 +10,17 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 public class PairWith extends ApiCall {
+	
 
-	public PairWith(FtDroidActivity activity) {
-		super(activity);
+	public PairWith(DroidApp application) {
+		super(application);
+		// TODO Auto-generated constructor stub
 	}
+
 
 	public void pairWith(Device device){
 		String nickname = device.getNickname();
@@ -42,14 +45,17 @@ public class PairWith extends ApiCall {
 	@Override
 	public void responseReceived(ApiResponse apiResponse) {
 		// TODO Auto-generated method stub
+		if(handler == null){
+			return;
+		}
 		JSONObject responseJSON = apiResponse.getJsonResponse();
 		try {
 			DeviceMessage deviceMsg = new DeviceMessage(responseJSON.getJSONObject("message"));
-			androidActivity.entityReceived(deviceMsg);
+			handler.entityReceived(deviceMsg);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			ApiLog.e("Could not created Message", e);
-			androidActivity.handleError(null, null);
+			handler.handleError(null, null);
 		}
 	}
 

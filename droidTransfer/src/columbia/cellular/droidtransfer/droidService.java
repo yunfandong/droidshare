@@ -11,12 +11,11 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Parcelable;
 
 
 
 public class droidService extends Service{
-	private droidApp app;
+	private DroidApp app;
 	private droidServiceBinder mBinder;
 	
 	
@@ -48,7 +47,7 @@ public class droidService extends Service{
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
-		app = (droidApp) getApplication();
+		app = (DroidApp) getApplication();
 
 		if (app == null) {
 			stopSelf();

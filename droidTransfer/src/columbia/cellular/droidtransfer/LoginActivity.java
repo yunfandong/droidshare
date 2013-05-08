@@ -2,6 +2,7 @@ package columbia.cellular.droidtransfer;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import columbia.cellular.Utils.DLog;
+import columbia.cellular.api.apicalls.ActivityApiResponseHandlerAbstract;
 import columbia.cellular.api.apicalls.Register;
 import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.service.ApiEntity;
@@ -23,7 +25,7 @@ import columbia.cellular.api.service.ApiError;
 
 import com.google.android.gcm.GCMRegistrar;
 
-public class LoginActivity extends FtDroidActivity {
+public class LoginActivity extends Activity {
 
 	Button button;
 	EditText nickName;
@@ -34,7 +36,7 @@ public class LoginActivity extends FtDroidActivity {
 	private TextView mLoginStatusMessageView;
 
 	protected String registrationId;
-	public droidApp app;
+	public DroidApp app;
 
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
@@ -47,7 +49,6 @@ public class LoginActivity extends FtDroidActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		createDefaultSettings();
 		instance = this;
 		setContentView(R.layout.login);
 
@@ -58,16 +59,16 @@ public class LoginActivity extends FtDroidActivity {
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
-		app = (droidApp) getApplication();
+		app = (DroidApp) getApplication();
 
-		registrationId = deviceProperty(PREF_GCM_REGISTRATION_ID, "");
+		registrationId = app.deviceProperty(DroidApp.PREF_GCM_REGISTRATION_ID, "");
 		if (registrationId.length() < 1) {
 			//DLog.i("Starting to register GCM...");
 			initGCM();
 		}
 
 
-		if (isRegistered()) {
+		if (((DroidApp) getApplication()).isRegistered()) {
 			DLog.i("Registered!");
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 		} else {
@@ -97,7 +98,7 @@ public class LoginActivity extends FtDroidActivity {
 
 		if (regId.equals("")) {
 			// Automatically registers application on startup.
-			GCMRegistrar.register(this, droidApp.SENDER_ID);
+			GCMRegistrar.register(this, DroidApp.SENDER_ID);
 			regId = GCMRegistrar.getRegistrationId(this);
 			registrationId = regId;
 			DLog.i("->registration ID: " + regId);
@@ -139,7 +140,8 @@ public class LoginActivity extends FtDroidActivity {
 					DLog.i("Registering Device: "
 							+ nickName.getText().toString() + " "
 							+ registrationId);
-					Register register = new Register(LoginActivity.this);
+					Register register = new Register((DroidApp) getApplication());
+					register.setResponseHandler(new LoginResponseHandler(LoginActivity.this));
 					register.registerDevice(device);
 				}
 
@@ -180,31 +182,42 @@ public class LoginActivity extends FtDroidActivity {
 		}
 	}
 
-	@Override
-	public void entityReceived(ApiEntity entity) {
-		Device device = (Device) entity;
-		Toast.makeText(this, "Device registered : token: " + device.getToken(),
-				Toast.LENGTH_LONG).show();
-		startActivity(new Intent(LoginActivity.this, MainActivity.class));
-		showProgress(false);
-	}
 
-	@Override
-	public void handleError(ApiError[] errors, ApiEntity entity) {
-		// TODO Auto-generated method stub
-		showProgress(false);
-		_handleErrorsGeneric(errors, entity);
-	}
 
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if (isRegistered()) {
+		if (((DroidApp) getApplication()).isRegistered()) {
 			DLog.i("Registered!");
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 		}
 		
+		
+	}
+	
+	public class LoginResponseHandler extends ActivityApiResponseHandlerAbstract{
+
+		public LoginResponseHandler(Activity activity) {
+			super(activity);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void entityReceived(ApiEntity entity) {
+			// TODO Auto-generated method stub
+			Device device = (Device) entity;
+			LoginActivity.this.app.showToastLong("Device registered : token: " + device.getToken());
+			startActivity(new Intent(LoginActivity.this, MainActivity.class));
+			showProgress(false);
+		}
+
+		@Override
+		public void handleError(ApiError[] errors, ApiEntity entity) {
+			// TODO Auto-generated method stub
+			showProgress(false);
+			_handleErrorsGeneric(errors, entity);
+		}
 		
 	}
 	

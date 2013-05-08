@@ -12,24 +12,33 @@ import columbia.cellular.api.service.ApiError;
 import columbia.cellular.api.service.ApiLog;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
-import columbia.cellular.droidtransfer.FtDroidActivity;
-
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 public abstract class ApiCall {
 	protected ApiRequestWrapper apiRequest;
-	protected FtDroidActivity androidActivity;
+	protected DroidApp androidApplication;
+	protected ActivityApiResponseHandler handler;
 
 	protected boolean returnEvents = true;
-	public ApiCall(FtDroidActivity activity) {
-		this.androidActivity = activity;
-		Device thisDevice = activity.getRegisteredDevice();
+	public ApiCall(DroidApp application) {
+		this.androidApplication = application;
+		Device thisDevice = application.getRegisteredDevice();
 		if (thisDevice != null) {
 			ApiAuthenticator.setDeviceNickname(thisDevice.getNickname());
 			ApiAuthenticator.setDeviceToken(thisDevice.getToken());
 		}
 	}
-
+	
+	public ApiCall(DroidApp application, ActivityApiResponseHandler handler) {
+		this(application);
+		this.handler = handler;
+	}
+	
+	public void setResponseHandler(ActivityApiResponseHandler hd){
+		handler = hd;
+	}
+	
 	protected void processAsync() {
 		if (apiRequest == null) {
 			throw new IllegalArgumentException("api request is null");
@@ -44,7 +53,7 @@ public abstract class ApiCall {
 	 * 
 	 * @param done
 	 * @param total
-	 *            Usually performed on the UI thread
+	 * Usually performed on the UI thread
 	 * 
 	 */
 	public void progressUpdated(long done, long total){}
@@ -53,6 +62,7 @@ public abstract class ApiCall {
 		if(!returnEvents){
 			return;
 		}
+		
 		ApiError[] errors = apiResponse.getErrors();
 		JSONObject rawJSON = apiResponse.getJsonResponse();
 		DeviceMessage messageEntity = null;
@@ -64,7 +74,8 @@ public abstract class ApiCall {
 				// TODO Auto-generated catch block
 			}
 		}
-		androidActivity.handleError(errors, messageEntity);
+		
+		handler.handleError(errors, messageEntity);
 	}
 
 	public void emptyResponse(Exception e) {
@@ -72,7 +83,7 @@ public abstract class ApiCall {
 			return;
 		}
 		ApiLog.e("Exception: ", e);
-		androidActivity.handleError(null, null);
+		handler.handleError(null, null);
 	}
 
 	protected void _processMessageResponse(ApiResponse apiResponse) {
@@ -84,11 +95,11 @@ public abstract class ApiCall {
 		try {
 			DeviceMessage deviceMsg = new DeviceMessage(
 					responseJSON.getJSONObject("message"));
-			androidActivity.entityReceived(deviceMsg);
+			handler.entityReceived(deviceMsg);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			ApiLog.e("Could not created Message", e);
-			androidActivity.handleError(null, null);
+			handler.handleError(null, null);
 		}
 	}
 

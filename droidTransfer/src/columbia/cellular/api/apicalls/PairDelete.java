@@ -4,13 +4,15 @@ import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 
 public class PairDelete extends PairWith {
 
-	public PairDelete(FtDroidActivity activity) {
-		super(activity);
+	
+
+	public PairDelete(DroidApp application) {
+		super(application);
 		// TODO Auto-generated constructor stub
 	}
 

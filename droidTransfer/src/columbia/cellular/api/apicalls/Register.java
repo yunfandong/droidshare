@@ -9,13 +9,14 @@ import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiServerConnector;
-import columbia.cellular.droidtransfer.FtDroidActivity;
+import columbia.cellular.droidtransfer.DroidApp;
 
 public class Register extends ApiCall {
 	
 	
-	public Register(FtDroidActivity activity) {
-		super(activity);
+
+	public Register(DroidApp application) {
+		super(application);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,14 +43,18 @@ public class Register extends ApiCall {
 		try {
 			//process device response
 			Device responseDevice = new Device(responseObj.getJSONObject("device"));
-			androidActivity.setDeviceProperty(FtDroidActivity.PREF_DEVICE_ID, ""+responseDevice.getId());
-			androidActivity.setDeviceProperty(FtDroidActivity.PREF_DEVICE_NICKNAME, responseDevice.getNickname());
-			androidActivity.setDeviceProperty(FtDroidActivity.PREF_DEVICE_TOKEN, responseDevice.getToken());
-			androidActivity.setDeviceProperty(FtDroidActivity.PREF_EMAIL_ADDRESS, responseDevice.getEmail());
-			androidActivity.entityReceived(responseDevice);
+			androidApplication.setDeviceProperty(DroidApp.PREF_DEVICE_ID, ""+responseDevice.getId());
+			androidApplication.setDeviceProperty(DroidApp.PREF_DEVICE_NICKNAME, responseDevice.getNickname());
+			androidApplication.setDeviceProperty(DroidApp.PREF_DEVICE_TOKEN, responseDevice.getToken());
+			androidApplication.setDeviceProperty(DroidApp.PREF_EMAIL_ADDRESS, responseDevice.getEmail());
+			if(handler !=null){
+				handler.entityReceived(responseDevice);
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			androidActivity.entityReceived(null);
+			if(handler !=null){
+				handler.entityReceived(null);
+			}
 		}
 		
 	}
