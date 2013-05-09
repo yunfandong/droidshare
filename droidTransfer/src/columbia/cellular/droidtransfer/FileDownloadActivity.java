@@ -1,17 +1,21 @@
 package columbia.cellular.droidtransfer;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +27,8 @@ import columbia.cellular.file.OpenFileDialog;
 public class FileDownloadActivity extends ListActivity {
 
     protected DroidApp application;
-    protected Timer timer = new Timer(); 
+    protected Timer timer = new Timer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,17 +54,18 @@ public class FileDownloadActivity extends ListActivity {
         return true;
     }
 
-    private class CellUpdateTask extends TimerTask{
+    private class CellUpdateTask extends TimerTask {
         @Override
-        public void run() {        
-            runOnUiThread(new Runnable() {              
+        public void run() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     doDownloadListUpdate();
                 }
             });
-        }       
+        }
     }
+
     public final class CellHolder {
         public TextView fileName;
         public TextView statusText;
@@ -68,10 +74,10 @@ public class FileDownloadActivity extends ListActivity {
         public LinearLayout downloadCell;
         public ProgressBar progressBar;
         private Map<String, Integer> imagemap = null;
-        
+
         private int getIconResource(String filename) {
-            if(imagemap == null){
-                imagemap = application.getImageIds(); 
+            if (imagemap == null) {
+                imagemap = application.getImageIds();
             }
             String suffixType = OpenFileDialog.getSfType(OpenFileDialog.FileSelectView.getSuffix(filename)
                     .toLowerCase());
@@ -85,24 +91,41 @@ public class FileDownloadActivity extends ListActivity {
                 return 0;
             }
         }
-        
-        public void updateWith(FileDownloadRecord downloadRecord){
+
+        public void updateWith(final FileDownloadRecord downloadRecord) {
             fileName.setText(downloadRecord.getBaseFilename());
             fileIcon.setImageResource(getIconResource(downloadRecord.getRemotePath()));
             destinationText.setText("Downloading to " + downloadRecord.getDestination());
-            
+
             String statusTextStr;
-            if(downloadRecord.completed || downloadRecord.hasError){
+            if (downloadRecord.completed || downloadRecord.hasError) {
                 statusTextStr = downloadRecord.getStatusText();
                 progressBar.setVisibility(View.GONE);
                 destinationText.setText("Saved to " + downloadRecord.getDestination());
-            }else{
+            } else {
                 progressBar.setMax(100);
                 progressBar.setProgress(downloadRecord.percentDone);
-                statusTextStr= downloadRecord.percentDone + "% "+ downloadRecord.getStatusText();
+                statusTextStr = downloadRecord.percentDone + "% " + downloadRecord.getStatusText();
                 destinationText.setText("Downloading to " + downloadRecord.getDestination());
             }
-            
+
+            final String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    MimeTypeMap.getFileExtensionFromUrl(downloadRecord.getDestination()));
+            if (downloadRecord.isCompleted()) {
+                downloadCell.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent();
+                        intent.setAction(android.content.Intent.ACTION_VIEW);
+                        File file = new File(downloadRecord.getDestination());
+                        intent.setDataAndType(Uri.fromFile(file), mimeType);
+                        startActivity(intent);
+                    }
+                });
+            }
+
             statusText.setText(statusTextStr);
         }
     }
@@ -116,8 +139,7 @@ public class FileDownloadActivity extends ListActivity {
             this.mInflater = LayoutInflater.from(context);
             downloadKeys = new Long[application.getFiledownloadQueue().size()];
             application.getFiledownloadQueue().keySet().toArray(downloadKeys);
-            for(int i = 0; i < downloadKeys.length/2; i++)
-            {
+            for (int i = 0; i < downloadKeys.length / 2; i++) {
                 Long temp = downloadKeys[i];
                 downloadKeys[i] = downloadKeys[downloadKeys.length - i - 1];
                 downloadKeys[downloadKeys.length - i - 1] = temp;
@@ -163,7 +185,6 @@ public class FileDownloadActivity extends ListActivity {
             return convertView;
         }
 
-        
     }
 
 }
