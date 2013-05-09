@@ -25,13 +25,16 @@
     <string name="options_clear">Clear</string>
     <string name="options_exit">Exit</string>
     <string name="default_root">/</string>
-    <string name="loading">Loading...</string>
-    <string name="error_dialog_title">Errors Occured</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="error_dialog_title">Errors Occurred</string>
     <string name="pair_list_empty">You are not currently paired with any device. To add a new device, click menu -&gt; add a device</string>
     <string name="pair_open">Open</string>
     <string name="holder_nickname">Nickname</string>
     <string name="last_seen">last seen</string>
     <string name="title_activity_file_list">FileListActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="loading_filelist">Loading file list&#8230;</string>
+    <string name="filelist_title">File List</string>
+    <string name="file_list_timeout_error">It seems %s is not available at the moment, try again later.</string>
 
 </resources>

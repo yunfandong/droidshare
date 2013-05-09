@@ -16,7 +16,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -105,7 +104,7 @@ public class OpenFileDialog {
 		return type;
 	}
 	
-	static class FileSelectView extends ListView implements OnItemClickListener{
+	public static class FileSelectView extends ListView implements OnItemClickListener{
 		
 		
 		private CallbackBundle callback = null;
@@ -127,7 +126,7 @@ public class OpenFileDialog {
 			refreshFileList();
 		}
 		
-		private String getSuffix(String filename){
+		public static String getSuffix(String filename){
 			int dix = filename.lastIndexOf('.');
 			if(dix<0){
 				return "";

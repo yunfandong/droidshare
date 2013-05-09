@@ -48,7 +48,7 @@ public class DeviceMessage extends ApiEntity {
 					metaFilePath = metaData.getString("path");
 				}				
 				
-				if(metaData.has("file-list")){
+				if(metaData.has("file-list") && !metaData.isNull("file-list")){
 					metaFileList = metaData.getJSONObject("file-list");
 				}
 				

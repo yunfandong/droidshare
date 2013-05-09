@@ -1,8 +1,7 @@
 package columbia.cellular.droidtransfer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -34,8 +33,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import columbia.cellular.Utils.DLog;
+import columbia.cellular.Utils.RelativeDate;
 import columbia.cellular.api.apicalls.ActivityApiResponseHandlerAbstract;
 import columbia.cellular.api.apicalls.PairList;
+import columbia.cellular.api.apicalls.PairResponse;
 import columbia.cellular.api.apicalls.PairWith;
 import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.entities.DeviceList;
@@ -64,6 +65,10 @@ public class MainActivity extends ListActivity {
 	protected DeviceList listOfPairs;
 	private static MainActivity instance;
 
+	public static final String EXTRA_PAIR_MESSAGE = "pairMsg";
+	public static final String EXTRA_PAIR_MESSAGE_ID = "msgId";
+	public static final String EXTRA_PAIR_LIST_REFRESH = "refreshList";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -73,7 +78,6 @@ public class MainActivity extends ListActivity {
 		app = (DroidApp) getApplication();
 		initViews();
 		initMainHandler();
-		// initGCM();
 		loadStatusMessageView.setText(R.string.loading);
 		Device regDev = app.getRegisteredDevice();
 		app.showToast("Welcome  " + regDev.getNickname());
@@ -81,29 +85,41 @@ public class MainActivity extends ListActivity {
 	}
 
 	protected void loadPairList() {
+		loadPairList(false);
+	}
+
+	protected void loadPairList(boolean forceReload) {
+		final String regKey = "PairList";
+		if (!forceReload && app.getFromRegistry(regKey, null) != null) {
+			listOfPairs = (DeviceList) app.getFromRegistry(regKey, null);
+			updateListView();
+			return;
+		}
+
 		// try local else
 		showProgress(true);
 		PairList pairListLoader = new PairList(app);
-		pairListLoader.setResponseHandler(new ActivityApiResponseHandlerAbstract(this) {
-			
-			@Override
-			public void handleError(ApiError[] errors, ApiEntity entity) {
-				showProgress(false);
-				_handleErrorsGeneric(errors, entity);
-			}
-			
-			@Override
-			public void entityReceived(ApiEntity entity) {
-				showProgress(false);
-				listOfPairs = (DeviceList) entity;
-				if (listOfPairs.size() == 0) {
-					showInfo();
-				} else {
-					pairListStatus.setVisibility(View.GONE);
-					updateListView();
-				}
-			}
-		});
+		pairListLoader
+				.setResponseHandler(new ActivityApiResponseHandlerAbstract(this) {
+
+					@Override
+					public void handleError(ApiError[] errors, ApiEntity entity) {
+						showProgress(false);
+						_handleErrorsGeneric(errors, entity);
+					}
+
+					@Override
+					public void entityReceived(ApiEntity entity) {
+						showProgress(false);
+						listOfPairs = (DeviceList) entity;
+						app.saveToRegistry(regKey, listOfPairs);
+						if (listOfPairs.size() == 0) {
+							showInfo();
+						} else {
+							updateListView();
+						}
+					}
+				});
 		pairListLoader.getPairList();
 	}
 
@@ -117,6 +133,39 @@ public class MainActivity extends ListActivity {
 	protected void onStart() {
 		super.onStart();
 		bindMyService();
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		_checkIntent(getIntent());
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		_checkIntent(intent);
+	}
+
+	protected void _checkIntent(Intent intent) {
+		if (intent == null) {
+			return;
+		}
+
+		// DLog.i("Extras: "+intent.getExtras());
+		String pairMessage = intent.getStringExtra(EXTRA_PAIR_MESSAGE);
+		String pairMessageId = intent.getStringExtra(EXTRA_PAIR_MESSAGE_ID);
+		DLog.i("Message: " + pairMessage + " messageID: " + pairMessageId);
+		if (pairMessage != null && pairMessageId != null) {
+			showPairingInfo(pairMessage, pairMessageId);
+		}
+
+		if (intent.getBooleanExtra(EXTRA_PAIR_LIST_REFRESH, false)) {
+			loadPairList(true);
+		}
+
 	}
 
 	// register for google cloud messaging
@@ -165,8 +214,6 @@ public class MainActivity extends ListActivity {
 	protected Dialog onCreateDialog(int id) {
 
 		if (id == listfileDialogId) {
-			Map<String, Integer> images = getImageIds();
-
 			final Dialog dialog = OpenFileDialog.createDialog(id, this,
 					"Select File", new CallbackBundle() {
 						@Override
@@ -180,7 +227,7 @@ public class MainActivity extends ListActivity {
 							DLog.i("Selected File:" + filename + "   path: "
 									+ filepath);
 						}
-					}, "", images);
+					}, "", app.getImageIds());
 			return dialog;
 		}
 		return null;
@@ -233,12 +280,6 @@ public class MainActivity extends ListActivity {
 				startActivity(i);
 			}
 		});
-		
-		peersTab.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				showPairingInfo();
-			}
-		});
 		// allow MultiThreaded
 
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
@@ -255,6 +296,7 @@ public class MainActivity extends ListActivity {
 	}
 
 	public void showInfo() {
+		pairListStatus.setVisibility(View.VISIBLE);
 		new AlertDialog.Builder(this)
 				.setTitle("Warning")
 				.setMessage("Currently no paired devices")
@@ -272,30 +314,54 @@ public class MainActivity extends ListActivity {
 								showAddDeviceInfo();
 							}
 						}).show();
-
-		pairListStatus.setVisibility(View.VISIBLE);
 	}
-	
-	public void showPairingInfo() {
+
+	public void showPairingInfo(String message, final String messageID) {
 		new AlertDialog.Builder(this)
-				.setTitle("Pairing")
-				.setMessage("Dong Yunfan wants to pair with you, do you agree?")
-				.setPositiveButton("Agree", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				})
+				.setTitle("Pairing Request")
+				.setMessage(message)
+				.setPositiveButton("Accept",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								_respondToPairingRequest(true, messageID);
+							}
+						})
 				.setNegativeButton("Decline",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								DLog.i("Add Device!!");
-							//	showAddDeviceInfo();
+								_respondToPairingRequest(false, messageID);
 							}
 						}).show();
 
-		pairListStatus.setVisibility(View.VISIBLE);
+	}
+
+	private void _respondToPairingRequest(final boolean response,
+			String messageID) {
+		PairResponse responder = new PairResponse(app);
+		responder.setResponseHandler(new ActivityApiResponseHandlerAbstract(
+				this) {
+
+			@Override
+			public void handleError(ApiError[] errors, ApiEntity entity) {
+				// TODO Auto-generated method stub
+				_handleErrorsGeneric(errors, entity);
+			}
+
+			@Override
+			public void entityReceived(ApiEntity entity) {
+				// TODO Auto-generated method stub
+				app.showToast("Response has been successfully sent !");
+				if (response) {
+					loadPairList(true);
+				}
+			}
+		});
+
+		responder.sendResponse(response, Long.valueOf(messageID));
 	}
 
 	public void showAddDeviceInfo() {
@@ -321,33 +387,6 @@ public class MainActivity extends ListActivity {
 		});
 
 		dialog.show();
-
-	}
-
-	private Map<String, Integer> getImageIds() {
-
-		Map<String, Integer> images = new HashMap<String, Integer>();
-		// file type adapter
-		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root); // root
-		images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up); // back
-		images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder); // folder
-		images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
-		images.put("music", R.drawable.filedialog_music);
-		images.put("film", R.drawable.filedialog_film);
-		images.put("pdf", R.drawable.filedialog_pdf);
-		images.put("ppt", R.drawable.filedialog_ppt);
-		images.put("db", R.drawable.filedialog_db);
-		images.put("zip", R.drawable.filedialog_zip);
-		images.put("txt", R.drawable.filedialog_txt);
-		images.put("xls", R.drawable.filedialog_xls);
-		images.put("java", R.drawable.filedialog_java);
-		images.put("html", R.drawable.filedialog_html);
-		images.put("code", R.drawable.filedialog_code);
-		images.put("picture", R.drawable.filedialog_picture);
-		images.put("application", R.drawable.filedialog_application);
-		images.put("other", R.drawable.filedialog_file);
-
-		return images;
 
 	}
 
@@ -404,20 +443,21 @@ public class MainActivity extends ListActivity {
 
 			} else {
 				holder = (ListCellHolder) convertView.getTag();
-				DLog.i("Using... getTag()");
 			}
 
-			Device currentPair = deviceList.get(position);
+			final Device currentPair = deviceList.get(position);
 
 			holder.nickname.setText(currentPair.getNickname());
-			holder.lastSeen.setText(currentPair.getLastSeen());
+			holder.lastSeen.setText("Last seen "+RelativeDate.getRelativeDate(currentPair.getLastSeen()));
 			holder.email.setText(currentPair.getEmail());
 
 			holder.connectButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// open current Device
-					showDialog(listfileDialogId);
+					Intent fileListIntent = new Intent(MainActivity.this, FileListActivity.class);
+					fileListIntent.putExtra(FileListActivity.EXTRA_NICKNAME, currentPair.getNickname());
+					fileListIntent.putExtra(FileListActivity.EXTRA_PATH, "/");
+					startActivity(fileListIntent);
 				}
 			});
 
@@ -428,27 +468,24 @@ public class MainActivity extends ListActivity {
 
 	public void doPairWith(String device) {
 		PairWith pairWith = new PairWith(app);
-		pairWith.setResponseHandler(
-				new ActivityApiResponseHandlerAbstract(this) {
-					@Override
-					public void handleError(ApiError[] errors, ApiEntity entity) {
-						// TODO Auto-generated method stub
-						showProgress(false);
-						_handleErrorsGeneric(errors, entity);
-					}
-					
-					@Override
-					public void entityReceived(ApiEntity entity) {
-						showProgress(false);
-						app.showToast("Pairing request has been sent.");
-					}
-				}
-		);
+		pairWith.setResponseHandler(new ActivityApiResponseHandlerAbstract(this) {
+			@Override
+			public void handleError(ApiError[] errors, ApiEntity entity) {
+				// TODO Auto-generated method stub
+				showProgress(false);
+				_handleErrorsGeneric(errors, entity);
+			}
+
+			@Override
+			public void entityReceived(ApiEntity entity) {
+				showProgress(false);
+				app.showToast("Pairing request has been sent.");
+			}
+		});
 		pairWith.pairWith(new Device(device, ""));
 		DLog.i("Pair Request Sent :" + device);
 		// app.showToast("Pair Request Sent (" + device + ")");
 	}
-
 
 	protected void showProgress(final boolean show) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -484,7 +521,7 @@ public class MainActivity extends ListActivity {
 
 	}
 
-	public static MainActivity getInstance(){
+	public static MainActivity getInstance() {
 		return instance;
 	}
 }

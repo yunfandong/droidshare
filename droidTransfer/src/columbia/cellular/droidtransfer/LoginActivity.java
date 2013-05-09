@@ -69,12 +69,11 @@ public class LoginActivity extends Activity {
 
 
 		if (((DroidApp) getApplication()).isRegistered()) {
-			DLog.i("Registered!");
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
+			finish();
 		} else {
 			registerDevice();
 		}
-
 	}
 
 	@Override
@@ -209,6 +208,7 @@ public class LoginActivity extends Activity {
 			Device device = (Device) entity;
 			LoginActivity.this.app.showToastLong("Device registered : token: " + device.getToken());
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
+			finish();
 			showProgress(false);
 		}
 

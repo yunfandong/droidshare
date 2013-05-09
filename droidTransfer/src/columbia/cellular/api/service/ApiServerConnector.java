@@ -57,7 +57,6 @@ public class ApiServerConnector {
 		
 		try {
 			httpUriRequest.addHeader("xAuth", ApiAuthenticator.getPayload());
-			
 		} catch (UnsupportedEncodingException e) {			
 		}		
 		

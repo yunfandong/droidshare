@@ -35,7 +35,7 @@ public abstract class ApiRequestHandler implements ApiRequestListener {
 				Header header = response.getLastHeader("Content-Type");
 				String contentType = header == null ? "" : response
 						.getLastHeader("Content-Type").getValue();
-				ApiLog.i("Content-Type: " + contentType);
+				//ApiLog.i("Content-Type: " + contentType);
 				return new ApiResponse(getStringFromResponse(response),
 						contentType);
 			} else {

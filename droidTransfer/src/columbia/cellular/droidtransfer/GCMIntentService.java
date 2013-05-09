@@ -63,8 +63,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 		if (LoginActivity.instance != null) {
 			LoginActivity.instance.registrationReceived(registrationId);
 			DLog.i("Updating on the server...");
-			if (application.isRegistered()) {
-				GcmUpdate updateGcm = new GcmUpdate(application);
+			if (((DroidApp) getApplication()).isRegistered()) {
+				GcmUpdate updateGcm = new GcmUpdate((DroidApp) getApplication());
 				updateGcm.update(registrationId);
 			}
 		}
@@ -87,7 +87,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "Received message");
 		applicationContext = context;
-		String msgNotify = getString(R.string.gcm_message);
+		application = (DroidApp) getApplication();
 		String message = intent.getStringExtra("messages");
 
 		try {
@@ -113,7 +113,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		DLog.i("Message Content is : " + messageContent);
+		//DLog.i("Message Content is : " + messageContent);
 		if (messageContent.equals(MSG_FILE_LIST_REQUEST)) {
 			_handleSendFileList(message);
 		} else if (messageContent.equals(MSG_FILE_REQUEST)) {
@@ -131,14 +131,19 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	private void _handlePairDeleted(DeviceMessage message) {
-		// refresh the stuff
+
 	}
 
 	private void _handlePairRequest(DeviceMessage message) {
 		String notifyMessage = String.format("%s (%s) wants to pair with you.",
 				message.getSender().getNickname(), message.getSender()
 						.getEmail());
-		generateNotification(applicationContext, notifyMessage);
+		
+		Intent notifyIntent = new Intent(applicationContext, MainActivity.class);
+		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_MESSAGE, notifyMessage);
+		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_MESSAGE_ID, ""+message.getMessageID());
+		
+		generateNotification(applicationContext, notifyMessage, "Pairing Request", notifyIntent);
 	}
 
 	private void _handleSendFileList(DeviceMessage message) {
@@ -148,7 +153,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		DLog.i("Handling send file list");
+		DLog.i("Sending file list");
 		SendFileList sender = new SendFileList(application);
 		String rootPath = application.getSetting(DroidApp.PREF_ROOT_PATH, "");
 		FileListGen fileListGen = new FileListGen(rootPath, path);
@@ -162,7 +167,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 
 		error = fileListGen.getErrorMessage();
-		sender.setReturnEvents(false);
 		sender.send(path, fileListJson, message.getMessageID(), error);
 	}
 
@@ -173,7 +177,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		String rootPath = application.getSetting(DroidApp.PREF_ROOT_PATH, "");
+		String rootPath = ((DroidApp) getApplication()).getSetting(DroidApp.PREF_ROOT_PATH, "");
 		String fullPath = rootPath + path;
 		String error = null;
 		File fileToSend = new File(fullPath);
@@ -209,7 +213,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 				"%s (%s) accepted your pairing request.", message.getSender()
 						.getNickname(), message.getSender().getEmail());
 
-		generateNotification(applicationContext, notifyMessage);
+		Intent notifyIntent = new Intent(applicationContext, MainActivity.class);
+		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_LIST_REFRESH, true);
+
+		generateNotification(applicationContext, notifyMessage, "Pairing Accepted", notifyIntent);
 
 	}
 
@@ -232,32 +239,46 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected boolean onRecoverableError(Context context, String errorId) {
 		// log message
 		Log.i(TAG, "Received recoverable error: " + errorId);
-		// displayMessage(context, getString(R.string.gcm_recoverable_error,
-		// errorId));
 		return super.onRecoverableError(context, errorId);
+	}
+
+	public static void generateNotification(Context context, String message) {
+		generateNotification(context, message, null, null);
 	}
 
 	/**
 	 * Issues a notification to inform the user that server has sent a message.
 	 */
-	public static void generateNotification(Context context, String message) {
-		int icon = R.drawable.ic_stat_gcm;
-		long when = System.currentTimeMillis();
+	@SuppressWarnings("deprecation")
+	public static void generateNotification(Context context, String message,
+			String title, Intent notificationIntent) {
+
+		if (notificationIntent == null) {
+			notificationIntent = new Intent(context, MainActivity.class);
+		}
+
+		//DLog.i("Extras to send: "+notificationIntent.getExtras());
+		// set intent so it does not start a new activity
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		PendingIntent intent = PendingIntent.getActivity(context, 0,
+				notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT );
+		
+
+		Notification notification = new Notification.Builder(context)
+				.setContentTitle(
+						title == null ? context.getString(R.string.app_name)
+								: title).setContentText(message)
+				.setSmallIcon(R.drawable.ic_stat_gcm).setContentIntent(intent)
+				.setWhen(System.currentTimeMillis())
+				.getNotification();
+
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+		//notification.flags |= Notification.FLAG_INSISTENT;
+		//notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		
 		NotificationManager notificationManager = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		// Notification notification = new Notification(icon, message, when);
-		Notification notification = new Notification(icon, message, when);
-		String title = context.getString(R.string.app_name);
-
-		Intent notificationIntent = new Intent(context, MainActivity.class);
-		// set intent so it does not start a new activity
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent intent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, title, message, intent);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notificationManager.notify(0, notification);
 	}
 

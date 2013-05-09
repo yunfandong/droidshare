@@ -32,6 +32,7 @@ public class droidService extends Service{
 		
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onStart(Intent intent, int startId) {
 		// TODO bindService出来的服务不会调用这个
@@ -78,8 +79,7 @@ public class droidService extends Service{
 				
 				//response 
 				String response = "helloworld response";
-				sendResponse(response , app.RESPONSE_MESSAGE);
-				
+				sendResponse(response , DroidApp.RESPONSE_MESSAGE);
 			}
 		}
 	};

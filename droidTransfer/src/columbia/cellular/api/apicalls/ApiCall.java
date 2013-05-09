@@ -1,7 +1,5 @@
 package columbia.cellular.api.apicalls;
 
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,13 +12,13 @@ import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.droidtransfer.DroidApp;
 
-
 public abstract class ApiCall {
 	protected ApiRequestWrapper apiRequest;
 	protected DroidApp androidApplication;
 	protected ActivityApiResponseHandler handler;
 
 	protected boolean returnEvents = true;
+
 	public ApiCall(DroidApp application) {
 		this.androidApplication = application;
 		Device thisDevice = application.getRegisteredDevice();
@@ -29,16 +27,16 @@ public abstract class ApiCall {
 			ApiAuthenticator.setDeviceToken(thisDevice.getToken());
 		}
 	}
-	
+
 	public ApiCall(DroidApp application, ActivityApiResponseHandler handler) {
 		this(application);
 		this.handler = handler;
 	}
-	
-	public void setResponseHandler(ActivityApiResponseHandler hd){
+
+	public void setResponseHandler(ActivityApiResponseHandler hd) {
 		handler = hd;
 	}
-	
+
 	protected void processAsync() {
 		if (apiRequest == null) {
 			throw new IllegalArgumentException("api request is null");
@@ -53,16 +51,17 @@ public abstract class ApiCall {
 	 * 
 	 * @param done
 	 * @param total
-	 * Usually performed on the UI thread
+	 *            Usually performed on the UI thread
 	 * 
 	 */
-	public void progressUpdated(long done, long total){}
+	public void progressUpdated(long done, long total) {
+	}
 
 	public void errorReceived(ApiResponse apiResponse) {
-		if(!returnEvents){
+		if (!returnEvents) {
 			return;
 		}
-		
+
 		ApiError[] errors = apiResponse.getErrors();
 		JSONObject rawJSON = apiResponse.getJsonResponse();
 		DeviceMessage messageEntity = null;
@@ -74,12 +73,12 @@ public abstract class ApiCall {
 				// TODO Auto-generated catch block
 			}
 		}
-		
+
 		handler.handleError(errors, messageEntity);
 	}
 
 	public void emptyResponse(Exception e) {
-		if(!returnEvents){
+		if (!returnEvents && handler != null) {
 			return;
 		}
 		ApiLog.e("Exception: ", e);
@@ -87,7 +86,7 @@ public abstract class ApiCall {
 	}
 
 	protected void _processMessageResponse(ApiResponse apiResponse) {
-		if(!returnEvents){
+		if (!returnEvents || handler == null) {
 			return;
 		}
 		// TODO Auto-generated method stub
@@ -119,5 +118,4 @@ public abstract class ApiCall {
 		this.returnEvents = returnEvents;
 	}
 
-	
 }

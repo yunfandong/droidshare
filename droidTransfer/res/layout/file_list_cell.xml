@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flist_cell"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_light"
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_cell_small" >
+
+    <ImageView
+        android:id="@+id/flist_icon"
+        android:layout_width="@dimen/icon_width"
+        android:layout_height="@dimen/icon_width"
+        android:layout_gravity="center_horizontal"
+        android:maxWidth="@dimen/icon_width"
+        android:src="@drawable/filedialog_folder" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_margin"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/flist_filename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/flist_filesize"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/flist_lastmodified"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,6 +1,7 @@
 package columbia.cellular.droidtransfer;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Application;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 import columbia.cellular.Utils.DLog;
 import columbia.cellular.api.entities.Device;
+import columbia.cellular.file.OpenFileDialog;
 
 public class DroidApp extends Application{
 	public boolean isServiceRegistered = false;
@@ -171,5 +173,29 @@ public class DroidApp extends Application{
 		}
 	}
 	
+	public Map<String, Integer> getImageIds() {
+		Map<String, Integer> images = new HashMap<String, Integer>();
+		// file type adapter
+		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root); // root
+		images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up); // back
+		images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder); // folder
+		images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
+		images.put("music", R.drawable.filedialog_music);
+		images.put("film", R.drawable.filedialog_film);
+		images.put("pdf", R.drawable.filedialog_pdf);
+		images.put("ppt", R.drawable.filedialog_ppt);
+		images.put("db", R.drawable.filedialog_db);
+		images.put("zip", R.drawable.filedialog_zip);
+		images.put("txt", R.drawable.filedialog_txt);
+		images.put("xls", R.drawable.filedialog_xls);
+		images.put("java", R.drawable.filedialog_java);
+		images.put("html", R.drawable.filedialog_html);
+		images.put("code", R.drawable.filedialog_code);
+		images.put("picture", R.drawable.filedialog_picture);
+		images.put("application", R.drawable.filedialog_application);
+		images.put("other", R.drawable.filedialog_file);
+		return images;
+
+	}
 	
 }
