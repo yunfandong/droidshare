@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/download_cell"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/border_light"
     android:orientation="horizontal"
     android:padding="@dimen/padding_cell" >
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/download_fileicon"
         android:layout_width="32dp"
         android:layout_height="match_parent"
         android:src="@drawable/filedialog_ppt" />
@@ -19,24 +21,31 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/download_filename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/download_destination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <ProgressBar
-            android:id="@+id/progressBar1"
+            android:id="@+id/download_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/download_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 

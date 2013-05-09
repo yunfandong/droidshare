@@ -7,8 +7,9 @@
     <uses-sdk
         android:minSdkVersion="12"
         android:targetSdkVersion="16" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY" />
 
     <application
         android:name="columbia.cellular.droidtransfer.DroidApp"
@@ -63,6 +64,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="columbia.cellular.droidtransfer.MainActivity" />
+        </activity>
+        <activity
+            android:name="columbia.cellular.droidtransfer.FileDownloadActivity"
+            android:label="@string/title_activity_file_download" >
         </activity>
     </application>
 

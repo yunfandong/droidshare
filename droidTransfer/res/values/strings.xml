@@ -43,5 +43,9 @@
     <string name="filedownload_starting"> Downloading to %s.</string>
     <string name="filedownload_waiting">Waiting for pair</string>
     <string name="filedownload_completed">Completed</string>
+    <string name="title_activity_file_download">FileDownloadActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="download_empty_text">You are yet to initiate any downloads</string>
+    <string name="download_activity_name">Download Manager</string>
 
 </resources>

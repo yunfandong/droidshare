@@ -38,7 +38,7 @@ public class DroidApp extends Application {
     public static final String PREFS_DEVICE = "devicePreferences";
     public static final String PREFS_SETTINGS = "deviceSettings";
     private Device device;
-
+    private Map<String, Integer> images = null;
     private HashMap<String, Object> registry;
     private HashMap<Long, FileDownloadRecord> filedownloadQueue;
 
@@ -178,26 +178,28 @@ public class DroidApp extends Application {
     }
 
     public Map<String, Integer> getImageIds() {
-        Map<String, Integer> images = new HashMap<String, Integer>();
-        // file type adapter
-        images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root); // root
-        images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up); // back
-        images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder); // folder
-        images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
-        images.put("music", R.drawable.filedialog_music);
-        images.put("film", R.drawable.filedialog_film);
-        images.put("pdf", R.drawable.filedialog_pdf);
-        images.put("ppt", R.drawable.filedialog_ppt);
-        images.put("db", R.drawable.filedialog_db);
-        images.put("zip", R.drawable.filedialog_zip);
-        images.put("txt", R.drawable.filedialog_txt);
-        images.put("xls", R.drawable.filedialog_xls);
-        images.put("java", R.drawable.filedialog_java);
-        images.put("html", R.drawable.filedialog_html);
-        images.put("code", R.drawable.filedialog_code);
-        images.put("picture", R.drawable.filedialog_picture);
-        images.put("application", R.drawable.filedialog_application);
-        images.put("other", R.drawable.filedialog_file);
+        if (images == null) {
+            images = new HashMap<String, Integer>();
+            // file type adapter
+            images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root); // root
+            images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up); // back
+            images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder); // folder
+            images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
+            images.put("music", R.drawable.filedialog_music);
+            images.put("film", R.drawable.filedialog_film);
+            images.put("pdf", R.drawable.filedialog_pdf);
+            images.put("ppt", R.drawable.filedialog_ppt);
+            images.put("db", R.drawable.filedialog_db);
+            images.put("zip", R.drawable.filedialog_zip);
+            images.put("txt", R.drawable.filedialog_txt);
+            images.put("xls", R.drawable.filedialog_xls);
+            images.put("java", R.drawable.filedialog_java);
+            images.put("html", R.drawable.filedialog_html);
+            images.put("code", R.drawable.filedialog_code);
+            images.put("picture", R.drawable.filedialog_picture);
+            images.put("application", R.drawable.filedialog_application);
+            images.put("other", R.drawable.filedialog_file);
+        }
         return images;
 
     }
@@ -259,21 +261,37 @@ public class DroidApp extends Application {
         File outFile = new File(record.getDestination());
         record.setStarted(true);
         record.setStatusText(String.format(getString(R.string.filedownload_starting), record.getDestination()));
-        
+
         fileDownloader.startDownload(fileId, outFile);
     }
 
     protected void doProgressNotification(final FileDownloadRecord record, final long messageId) {
-        if(FileDownloadRecord.intent == null){
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    | Intent.FLAG_ACTIVITY_NEW_TASK);
-            FileDownloadRecord.intent = PendingIntent.getActivity(this, 0,
-                    notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (FileDownloadRecord.intent == null) {
+            Intent notificationIntent = new Intent(this, FileDownloadActivity.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            FileDownloadRecord.intent = PendingIntent.getActivity(this, 0, notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
         }
-        
+
         NotificationManager mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         record.initNotificationWith(mNotifyManager, mBuilder);
     }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+
+    public HashMap<Long, FileDownloadRecord> getFiledownloadQueue() {
+        return filedownloadQueue;
+    }
+
+    public void setFiledownloadQueue(HashMap<Long, FileDownloadRecord> filedownloadQueue) {
+        this.filedownloadQueue = filedownloadQueue;
+    }
+
 }

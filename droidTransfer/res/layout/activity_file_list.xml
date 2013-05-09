@@ -13,7 +13,7 @@
         android:paddingTop="@dimen/small_margin" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/download_fileicon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/phone" />
