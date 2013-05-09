@@ -1,7 +1,5 @@
 package columbia.cellular.droidtransfer;
 
-import java.util.HashMap;
-import java.util.Map;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -11,9 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
-import columbia.cellular.Utils.DLog;
 import columbia.cellular.file.CallbackBundle;
-import columbia.cellular.file.OpenFileDialog;
 import columbia.cellular.file.SelectRootDialog;
 
 public class SettingActivity extends Activity {
@@ -30,8 +26,10 @@ public class SettingActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
-		rootPath = ((DroidApp) getApplication()).getSetting(DroidApp.PREF_ROOT_PATH, "");
+		rootPath = ((DroidApp) getApplication()).getSetting(
+				DroidApp.PREF_ROOT_PATH, "");
 		// DLog.i("Setup Activity Start  id: " + userId + "  email: " + email);
+		app = (DroidApp) getApplication();
 		initViews();
 	}
 
@@ -46,17 +44,15 @@ public class SettingActivity extends Activity {
 	protected Dialog onCreateDialog(int id) {
 
 		if (id == selectPathDialogId) {
-			Map<String, Integer> images = getImageIds();
 			final Dialog dialog = SelectRootDialog.createDialog(id, this,
-					"Select File", new CallbackBundle() {
+					"Select Root Path", new CallbackBundle() {
 						@Override
 						public void callback(Bundle bundle) {
 							rootPath = bundle.getString("path");
 							setTitle(rootPath);
 							updatePath(rootPath);
-							DLog.i("Root Path changed to: " + rootPath);
 						}
-					}, images);
+					}, app.getImageIds(), rootPath);
 			return dialog;
 		}
 		return null;
@@ -65,34 +61,11 @@ public class SettingActivity extends Activity {
 	private void updatePath(String path) {
 		TextView text = (TextView) findViewById(R.id.rootpath);
 		text.setText(path);
-		((DroidApp) getApplication()).saveSetting(DroidApp.PREF_ROOT_PATH, path);
+		((DroidApp) getApplication())
+				.saveSetting(DroidApp.PREF_ROOT_PATH, path);
 		rootPath = path;
 	}
 
-	// connect file types with image resourceId
-
-	private Map<String, Integer> getImageIds() {
-
-		Map<String, Integer> images = new HashMap<String, Integer>();
-		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root); // root
-		images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up); // back
-		images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder); // folder
-		images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
-		images.put("music", R.drawable.filedialog_music);
-		images.put("film", R.drawable.filedialog_film);
-		images.put("pdf", R.drawable.filedialog_pdf);
-		images.put("ppt", R.drawable.filedialog_ppt);
-		images.put("db", R.drawable.filedialog_db);
-		images.put("zip", R.drawable.filedialog_zip);
-		images.put("xls", R.drawable.filedialog_xls);
-		images.put("java", R.drawable.filedialog_java);
-		images.put("html", R.drawable.filedialog_html);
-		images.put("code", R.drawable.filedialog_code);
-		images.put("picture", R.drawable.filedialog_picture);
-		images.put("application", R.drawable.filedialog_application);
-		images.put("other", R.drawable.filedialog_file);
-		return images;
-	}
 
 	public void initViews() {
 		uploadTab = (TextView) findViewById(R.id.upload_tab1);
@@ -102,8 +75,8 @@ public class SettingActivity extends Activity {
 		text.setText(rootPath);
 
 		// By default we select peers tab
-		uploadTab.setBackgroundResource(R.drawable.main_tab_selected_background);
-
+		uploadTab
+				.setBackgroundResource(R.drawable.main_tab_selected_background);
 
 		peersTab.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -119,11 +92,9 @@ public class SettingActivity extends Activity {
 					@Override
 					public void onClick(View arg0) {
 						showDialog(selectPathDialogId);
-						DLog.i("Selecting Path");
 					}
 				});
 
 	}
-
 
 }

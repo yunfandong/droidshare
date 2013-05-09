@@ -2,22 +2,24 @@ package columbia.cellular.api.apicalls;
 
 import java.io.File;
 
+import columbia.cellular.Utils.DLog;
 import columbia.cellular.api.service.ApiLog;
 import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiRequestWrapper;
 import columbia.cellular.api.service.ApiServerConnector;
 import columbia.cellular.droidtransfer.DroidApp;
+import columbia.cellular.droidtransfer.FileDownloadRecord;
 
 
 
 public class DownloadFile extends ApiCall {
 
-
+	private FileDownloadRecord downloadRecord;
 	
-	public DownloadFile(DroidApp application) {
+	public DownloadFile(DroidApp application, FileDownloadRecord downloadRecord) {
 		super(application);
-		// TODO Auto-generated constructor stub
+		this.downloadRecord = downloadRecord;
 	}
 
 	public void startDownload(long fileID, File outFile){
@@ -29,16 +31,21 @@ public class DownloadFile extends ApiCall {
 	
 	@Override
 	public void responseReceived(ApiResponse apiResponse) {
-		// TODO Auto-generated method stub
 		if(handler != null){
 			handler.entityReceived(null);
 		}
 	}
 	
 	@Override
+	public void errorReceived(ApiResponse apiResponse) {
+		DLog.w("Error response received");
+		super.errorReceived(apiResponse);
+	}
+	@Override
 	public void progressUpdated(long done, long total) {
 		// TODO Auto-generated method stub
-		ApiLog.i("Downloaded: "+done + " of "+ total);
+		ApiLog.i("Downloaded : "+done + " / "+ total);
+		downloadRecord.updateProgress(done, total);
 	}
 	
 	

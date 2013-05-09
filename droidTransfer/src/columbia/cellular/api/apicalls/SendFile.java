@@ -33,7 +33,7 @@ public class SendFile extends ApiCall {
 		if(errorMessage != null){
 			apiRequest.addParam(new ApiParam<String>("error", errorMessage));
 		}
-		
+		apiRequest.setListener(new DefaultRequestListener());
 		processAsync();
 	}
 	
@@ -49,7 +49,7 @@ public class SendFile extends ApiCall {
 	@Override
 	public void responseReceived(ApiResponse apiResponse) {
 		// TODO Auto-generated method stub
-		
+		_processMessageResponse(apiResponse);
 	}
 	
 	@Override

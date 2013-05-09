@@ -1,3 +1,5 @@
 /droidTransfer/bin/dexedLibs/*.jar
 /*.class
 /*.cache
+/droidTransfer/res/drawable-mdpi/Thumbs.db
+/droidTransfer/res/drawable-hdpi/Thumbs.db

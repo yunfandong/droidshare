@@ -22,13 +22,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 
 public class ApiServerConnector {
-	
+
 	private static ApiServerConnector instance;
 	public static String apiEndPoint = "http://ft.orilogbon.me/rpc";
 
 	public static final String REQUEST_TYPE_FORM = "application/x-www-form-urlencoded";
 	public static final String REQUEST_TYPE_MULTIPART = "multipart/form-data";
-	
+
 	public static final String API_URL_REGIGSTER = "/register";
 	public static final String API_URL_PAIR_WITH = "/pair-with";
 	public static final String API_URL_PAIR_RESPONSE = "/pair-response";
@@ -41,117 +41,125 @@ public class ApiServerConnector {
 	public static final String API_URL_DOWNLOAD_FILE = "/download-file";
 	public static final String API_URL_MESSAGES = "/messages";
 	public static final String API_URL_GCM_UPDATE = "/gcm-update";
-	
-	
-	
-	private ApiServerConnector(){
+
+	private ApiServerConnector() {
 	}
-	
-	public ApiResponse makeHttpRequest(ApiRequestWrapper request){
+
+	public ApiResponse makeHttpRequest(ApiRequestWrapper request) {
 		HttpUriRequest httpUriRequest;
-		if(request.getRequestMethod().equals(HttpPost.METHOD_NAME)){
-			httpUriRequest  = getHttpPostRequest(request);
-		}else{
-			httpUriRequest  = getHttpGetRequest(request);
+		if (request.getRequestMethod().equals(HttpPost.METHOD_NAME)) {
+			httpUriRequest = getHttpPostRequest(request);
+		} else {
+			httpUriRequest = getHttpGetRequest(request);
 		}
-		
+
 		try {
 			httpUriRequest.addHeader("xAuth", ApiAuthenticator.getPayload());
-		} catch (UnsupportedEncodingException e) {			
-		}		
-		
+		} catch (UnsupportedEncodingException e) {
+		}
+
 		HttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1); 
+		client.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+				HttpVersion.HTTP_1_1);
 		try {
-			if(request.getListener() != null){
+			if (request.getListener() != null) {
 				request.getListener().requestStarting(request, httpUriRequest);
 				return client.execute(httpUriRequest, request.getListener());
-			}else{
+			} else {
 				client.execute(httpUriRequest);
 			}
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			if(request.getListener() != null){
+			if (request.getListener() != null) {
 				request.getListener().handleException(e);
 			}
-		} finally{
+		} finally {
 			client.getConnectionManager().shutdown();
 		}
 		return null;
 	}
-	
-	
+
 	@SuppressWarnings("rawtypes")
-	private HttpUriRequest getHttpPostRequest(ApiRequestWrapper request){
-		HttpPost postRequest = new HttpPost(getNormalizedUrl(request.getRpcUri()));		
-		if(request.getParams().size() > 0){
-			//formparams.add(new BasicNameValuePair("param1", "value1"));
-			if(!request.isMultipart()){
+	private HttpUriRequest getHttpPostRequest(ApiRequestWrapper request) {
+		HttpPost postRequest = new HttpPost(
+				getNormalizedUrl(request.getRpcUri()));
+		if (request.getParams().size() > 0) {
+			// formparams.add(new BasicNameValuePair("param1", "value1"));
+			if (!request.isMultipart()) {
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
 				postRequest.addHeader("Content-Type", REQUEST_TYPE_FORM);
-				for(ApiParam param : request.getParams()){
-					params.add(new BasicNameValuePair(param.getName(), param.getValue().toString()));
+				for (ApiParam param : request.getParams()) {
+					params.add(new BasicNameValuePair(param.getName(), param
+							.getValue().toString()));
 				}
 				try {
-					UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+					UrlEncodedFormEntity entity = new UrlEncodedFormEntity(
+							params, "UTF-8");
 					postRequest.setEntity(entity);
 				} catch (UnsupportedEncodingException e) {
 					ApiLog.e("error occured", e);
 				}
-			}else{
-				postRequest.addHeader("Content-Type", REQUEST_TYPE_MULTIPART);
-		        try{
-		        	MultipartEntity multiPartEntity;
-		        	if(request.getListener() != null){
-		        		multiPartEntity = new MultipartEntityWithProgress (HttpMultipartMode.BROWSER_COMPATIBLE, request.getListener()) ;
-		        	}else{
-		        		multiPartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-		        	}
-		            
-					for(ApiParam param : request.getParams()){
-						if(param.getType().equals(ApiParam.TYPE_FILE)){
-							FileBody fileBody = new FileBody((File) param.getValue(), "application/octect-stream") ;
-				            multiPartEntity.addPart(param.getName(), fileBody) ;
-						}else{
-							multiPartEntity.addPart(param.getName(), new StringBody(param.getValue().toString())) ;
+			} else {
+				try {
+					MultipartEntity multiPartEntity;
+					if (request.getListener() != null) {
+						multiPartEntity = new MultipartEntityWithProgress(
+								HttpMultipartMode.BROWSER_COMPATIBLE,
+								request.getListener());
+					} else {
+						multiPartEntity = new MultipartEntity(
+								HttpMultipartMode.BROWSER_COMPATIBLE);
+					}
+
+					for (ApiParam param : request.getParams()) {
+						if (param.getType().equals(ApiParam.TYPE_FILE)) {
+							FileBody fileBody = new FileBody(
+									(File) param.getValue(),
+									"application/octect-stream");
+							multiPartEntity.addPart(param.getName(), fileBody);
+						} else {
+							multiPartEntity
+									.addPart(param.getName(), new StringBody(
+											param.getValue().toString()));
 						}
 					}
-		            //The usual form parameters can be added this way
-		            postRequest.setEntity(multiPartEntity) ;
-		            postRequest.setHeader("Content-Type", REQUEST_TYPE_MULTIPART);
-		        }catch (UnsupportedEncodingException ex){
-		            ApiLog.e("Error occured while uploading file: "+ex.getMessage(), ex);
-		        }
+					// The usual form parameters can be added this way
+					postRequest.setEntity(multiPartEntity);
+					//DLog.i("Multipart stuff: "+multiPartEntity);
+					//postRequest.setHeader("Content-Type",
+					//		REQUEST_TYPE_MULTIPART);
+				} catch (UnsupportedEncodingException ex) {
+					ApiLog.e(
+							"Error occured while uploading file: "
+									+ ex.getMessage(), ex);
+				}
 			}
 		}
 		return postRequest;
 	}
-	
-	
-	
+
 	@SuppressWarnings("rawtypes")
-	private HttpUriRequest getHttpGetRequest(ApiRequestWrapper request){
+	private HttpUriRequest getHttpGetRequest(ApiRequestWrapper request) {
 		String rpcUrl = getNormalizedUrl(request.getRpcUri());
 		HttpGet getRequest = new HttpGet(rpcUrl);
 		try {
-			//ApiLog.i("RPC URL: "+rpcUrl);
+			// ApiLog.i("RPC URL: "+rpcUrl);
 			URIBuilder builder = new URIBuilder(rpcUrl);
-			for(ApiParam param : request.getParams()){
-				builder.addParameter(param.getName(), param.getValue().toString());
+			for (ApiParam param : request.getParams()) {
+				builder.addParameter(param.getName(), param.getValue()
+						.toString());
 			}
 			getRequest.setURI(builder.build());
 		} catch (URISyntaxException e) {
-			ApiLog.w("Uri error: "+e.getMessage());
+			ApiLog.w("Uri error: " + e.getMessage());
 		}
-		
+
 		return getRequest;
-	}	
-	
-	
-	
-	public static ApiServerConnector getInstance(){
-		if(instance == null){
+	}
+
+	public static ApiServerConnector getInstance() {
+		if (instance == null) {
 			instance = new ApiServerConnector();
 		}
 		return instance;
@@ -165,13 +173,14 @@ public class ApiServerConnector {
 		ApiServerConnector.apiEndPoint = apiEndPoint;
 	}
 
-	public String getNormalizedUrl(String uri){
-		if(uri.indexOf("http://") == 0 || uri.indexOf("https://") == 0){
+	public String getNormalizedUrl(String uri) {
+		if (uri.indexOf("http://") == 0 || uri.indexOf("https://") == 0) {
 			return uri;
 		}
-		
+
 		String lrPattern = "(/$|^/)";
-		return  apiEndPoint.replaceAll(lrPattern, "") + "/"+ uri.replaceAll(lrPattern, "") +"/";
+		return apiEndPoint.replaceAll(lrPattern, "") + "/"
+				+ uri.replaceAll(lrPattern, "") + "/";
 	}
-	
+
 }

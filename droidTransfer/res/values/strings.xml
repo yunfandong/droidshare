@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">droidTransfer</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
 
     <!-- action bars -->
@@ -36,5 +35,13 @@
     <string name="loading_filelist">Loading file list&#8230;</string>
     <string name="filelist_title">File List</string>
     <string name="file_list_timeout_error">It seems %s is not available at the moment, try again later.</string>
+    <string name="folder_empty">There are no files in this folder, click on the back button.</string>
+    <string name="up_text">Up</string>
+    <string name="menu_add_device">Add Device</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="filedownload_queued">%s has been queued for downloading.</string>
+    <string name="filedownload_starting"> Downloading to %s.</string>
+    <string name="filedownload_waiting">Waiting for pair</string>
+    <string name="filedownload_completed">Completed</string>
 
 </resources>

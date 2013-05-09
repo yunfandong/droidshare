@@ -16,11 +16,14 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import columbia.cellular.Utils.DLog;
+import columbia.cellular.api.apicalls.ActivityApiResponseHandler;
 import columbia.cellular.api.apicalls.GcmUpdate;
 import columbia.cellular.api.apicalls.SendFile;
 import columbia.cellular.api.apicalls.SendFileList;
 import columbia.cellular.api.entities.DeviceMessage;
 import columbia.cellular.api.entities.DeviceMessageList;
+import columbia.cellular.api.service.ApiEntity;
+import columbia.cellular.api.service.ApiError;
 import columbia.cellular.api.service.ApiLog;
 import columbia.cellular.file.FileListGen;
 
@@ -113,7 +116,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			return;
 		}
 
-		//DLog.i("Message Content is : " + messageContent);
+		DLog.i("Message Received is : " + messageContent);
 		if (messageContent.equals(MSG_FILE_LIST_REQUEST)) {
 			_handleSendFileList(message);
 		} else if (messageContent.equals(MSG_FILE_REQUEST)) {
@@ -122,6 +125,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 			_handlePairingRejected(message);
 		} else if (messageContent.equals(MSG_PAIR_ACCEPTED)) {
 			_handlePairingAccepted(message);
+		} else if (messageContent.equals(MSG_FILE)) {
+			_handleFileDownload(message);
+		} else if (messageContent.equals(MSG_FILE_ERROR)) {
+			_handleFileError(message);
 		} else if (messageContent.equals(MSG_PAIR_REQUEST)) {
 			_handlePairRequest(message);
 		} else if (messageContent.equals(MSG_PAIR_DELETED)) {
@@ -130,20 +137,50 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	}
 
-	private void _handlePairDeleted(DeviceMessage message) {
+	private void _handleFileError(DeviceMessage message) {
+		DLog.i("New Message: " + message.getMessageID() + " is reply to : "
+				+ message.getInReplyTo() + " with error: "
+				+ message.getMetaErrorMessage() + " Path: "
+				+ message.getMetaFilePath());
 
+		application.fileDownloadHasError(message.getInReplyTo(),
+				message.getMetaErrorMessage());
+	}
+
+	private void _handleFileDownload(DeviceMessage message) {
+		DLog.i("New Message: " + message.getMessageID() + " is reply to : "
+				+ message.getInReplyTo() + " For file ID: "
+				+ message.getMetaFileID() + " Path: "
+				+ message.getMetaFilePath());
+
+		application.startFileDownload(message.getInReplyTo(),
+				message.getMetaFileID());
+	}
+
+	private void _handlePairDeleted(DeviceMessage message) {
+		String notifyMessage = String.format(
+				"You are no longer paired with %s (%s).", message.getSender()
+						.getNickname(), message.getSender().getEmail());
+
+		Intent notifyIntent = new Intent(applicationContext, MainActivity.class);
+		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_LIST_REFRESH, true);
+
+		generateNotification(applicationContext, notifyMessage,
+				"Pairing Deleted", notifyIntent);
 	}
 
 	private void _handlePairRequest(DeviceMessage message) {
 		String notifyMessage = String.format("%s (%s) wants to pair with you.",
 				message.getSender().getNickname(), message.getSender()
 						.getEmail());
-		
+
 		Intent notifyIntent = new Intent(applicationContext, MainActivity.class);
 		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_MESSAGE, notifyMessage);
-		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_MESSAGE_ID, ""+message.getMessageID());
-		
-		generateNotification(applicationContext, notifyMessage, "Pairing Request", notifyIntent);
+		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_MESSAGE_ID,
+				"" + message.getMessageID());
+
+		generateNotification(applicationContext, notifyMessage,
+				"Pairing Request", notifyIntent);
 	}
 
 	private void _handleSendFileList(DeviceMessage message) {
@@ -164,20 +201,39 @@ public class GCMIntentService extends GCMBaseIntentService {
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			error = e.getMessage();
+			DLog.e("JSON error: " + e);
 		}
 
 		error = fileListGen.getErrorMessage();
+		sender.setResponseHandler(new ActivityApiResponseHandler() {
+			public void handleError(ApiError[] errors, ApiEntity entity) {
+				if (errors != null) {
+					for (ApiError error : errors) {
+						DLog.w("SendFile: " + error.getErrorCode() + ": "
+								+ error.getErrorMessage());
+					}
+				}
+			}
+
+			@Override
+			public void entityReceived(ApiEntity entity) {
+				DLog.i("File list sent: "+entity);
+			}
+		});
+
 		sender.send(path, fileListJson, message.getMessageID(), error);
 	}
 
 	private void _handleSendFile(DeviceMessage message) {
 		String path = message.getMetaFilePath();
+		DLog.i("Sending file..." + path);
 		if (path == null) {
-			DLog.e("Cannot sent file to unknown path");
+			DLog.e("Cannot send file to unknown path");
 			return;
 		}
 
-		String rootPath = ((DroidApp) getApplication()).getSetting(DroidApp.PREF_ROOT_PATH, "");
+		String rootPath = ((DroidApp) getApplication()).getSetting(
+				DroidApp.PREF_ROOT_PATH, "");
 		String fullPath = rootPath + path;
 		String error = null;
 		File fileToSend = new File(fullPath);
@@ -198,13 +254,34 @@ public class GCMIntentService extends GCMBaseIntentService {
 		}
 
 		SendFile fileSender = new SendFile(application);
-		fileSender.setReturnEvents(false);
 		// @TODO create the upload progress bar
+		// DLog.i("About to send: "
+		// + (fileSender == null ? error : fileToSend.getAbsolutePath()));
+		fileSender.setResponseHandler(new ActivityApiResponseHandler() {
+			@Override
+			public void handleError(ApiError[] errors, ApiEntity entity) {
+				if (errors != null) {
+					for (ApiError error : errors) {
+						DLog.w("SendFile: " + error.getErrorCode() + ": "
+								+ error.getErrorMessage());
+					}
+				}
+			}
+
+			@Override
+			public void entityReceived(ApiEntity entity) {
+				DLog.i("File sent successfully");
+			}
+		});
+
 		fileSender.send(message.getMessageID(), path, fileToSend, error);
 	}
 
 	private void _handlePairingRejected(DeviceMessage message) {
-		// notify
+		String notifyMessage = message.getSender().getNickname()
+				+ " rejected your pairing request.";
+		generateNotification(applicationContext, notifyMessage,
+				"Pairing Rejected", null);
 	}
 
 	private void _handlePairingAccepted(DeviceMessage message) {
@@ -216,7 +293,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Intent notifyIntent = new Intent(applicationContext, MainActivity.class);
 		notifyIntent.putExtra(MainActivity.EXTRA_PAIR_LIST_REFRESH, true);
 
-		generateNotification(applicationContext, notifyMessage, "Pairing Accepted", notifyIntent);
+		generateNotification(applicationContext, notifyMessage,
+				"Pairing Accepted", notifyIntent);
 
 	}
 
@@ -257,26 +335,26 @@ public class GCMIntentService extends GCMBaseIntentService {
 			notificationIntent = new Intent(context, MainActivity.class);
 		}
 
-		//DLog.i("Extras to send: "+notificationIntent.getExtras());
+		// DLog.i("Extras to send: "+notificationIntent.getExtras());
 		// set intent so it does not start a new activity
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent intent = PendingIntent.getActivity(context, 0,
-				notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT );
-		
+				notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Notification notification = new Notification.Builder(context)
 				.setContentTitle(
 						title == null ? context.getString(R.string.app_name)
 								: title).setContentText(message)
-				.setSmallIcon(R.drawable.ic_stat_gcm).setContentIntent(intent)
-				.setWhen(System.currentTimeMillis())
-				.getNotification();
-
+				.setSmallIcon(R.drawable.ic_launcher_new).setContentIntent(intent)
+				.setWhen(System.currentTimeMillis()).getNotification();
+		
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		//notification.flags |= Notification.FLAG_INSISTENT;
-		//notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		
+		// notification.flags |= Notification.FLAG_INSISTENT;
+		notification.flags |= Notification.DEFAULT_SOUND;
+		notification.flags |= Notification.DEFAULT_LIGHTS;
+
 		NotificationManager notificationManager = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(0, notification);

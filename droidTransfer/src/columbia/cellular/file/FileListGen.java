@@ -48,46 +48,48 @@ public class FileListGen {
 		}
 
 		File[] files = curFile.listFiles();
-
-		PriorityQueue<File> fileQueue = new PriorityQueue<File>(files.length,
-				new Comparator<File>() {
-					@Override
-					public int compare(File lhs, File rhs) {
-						// TODO Auto-generated method stub
-						if ((lhs.isDirectory() && rhs.isDirectory())
-								|| (lhs.isFile() && rhs.isFile())) {
-							return lhs.getName().toLowerCase()
-									.compareTo(rhs.getName().toLowerCase());
-						} else {
-							return lhs.isDirectory() ? -1 : 1;
+		if(files.length > 0){
+			PriorityQueue<File> fileQueue = new PriorityQueue<File>(files.length,
+					new Comparator<File>() {
+						@Override
+						public int compare(File lhs, File rhs) {
+							// TODO Auto-generated method stub
+							if ((lhs.isDirectory() && rhs.isDirectory())
+									|| (lhs.isFile() && rhs.isFile())) {
+								return lhs.getName().toLowerCase()
+										.compareTo(rhs.getName().toLowerCase());
+							} else {
+								return lhs.isDirectory() ? -1 : 1;
+							}
 						}
-					}
 
-				});
+					});
 
-		for (File file : files) {
-			fileQueue.add(file);
-		}
-
-		File file;
-		String pathPrefix = path.replaceAll("/$", "");
-		while (!fileQueue.isEmpty()) {
-			file = fileQueue.poll();
-			if (!file.isHidden()) {
-				String type = file.isDirectory() ? "folder" : "file";
-				// String relative_path =
-				// file.getPath().substring(root.length());
-				JSONObject file_item = new JSONObject();
-				file_item.put("name", file.getName());
-				file_item.put("type", type);
-				file_item.put("size", file.length());
-				file_item.put("last_modified", file.lastModified());
-				file_item.put("path", pathPrefix + "/" + file.getName());
-				list_of_files.put(file_item);
+			for (File file : files) {
+				fileQueue.add(file);
 			}
+
+			File file;
+			String pathPrefix = path.replaceAll("/$", "");
+			while (!fileQueue.isEmpty()) {
+				file = fileQueue.poll();
+				if (!file.isHidden() && file.canRead()) {
+					String type = file.isDirectory() ? "folder" : "file";
+					// String relative_path =
+					// file.getPath().substring(root.length());
+					JSONObject file_item = new JSONObject();
+					file_item.put("name", file.getName());
+					file_item.put("type", type);
+					file_item.put("size", file.length());
+					file_item.put("last_modified", file.lastModified());
+					file_item.put("path", pathPrefix + "/" + file.getName());
+					list_of_files.put(file_item);
+				}
+			}
+			json_to_send.put("files", list_of_files);
 		}
 
-		json_to_send.put("files", list_of_files);
+		
 		return json_to_send;
 	}
 

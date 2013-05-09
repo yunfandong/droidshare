@@ -2,7 +2,6 @@ package columbia.cellular.droidtransfer;
 
 import java.util.ArrayList;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
@@ -48,7 +47,7 @@ import columbia.cellular.file.OpenFileDialog;
 
 public class MainActivity extends ListActivity {
 
-	private TextView uploadTab;
+	private TextView settingsTab;
 	private TextView peersTab;
 
 	private View pairListView;
@@ -115,6 +114,8 @@ public class MainActivity extends ListActivity {
 						app.saveToRegistry(regKey, listOfPairs);
 						if (listOfPairs.size() == 0) {
 							showInfo();
+							updateListView();
+							pairListStatus.setVisibility(View.VISIBLE);
 						} else {
 							updateListView();
 						}
@@ -207,10 +208,6 @@ public class MainActivity extends ListActivity {
 		}
 	}
 
-	/***************************************************************
-	 * Basic (views, userinfos,dialogs) initialization part yd2238
-	 *************************************************************** */
-
 	protected Dialog onCreateDialog(int id) {
 
 		if (id == listfileDialogId) {
@@ -237,20 +234,46 @@ public class MainActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		// getMenuInflater().inflate(R.menu.main, menu);
-		menu.add("add device").setIcon(R.drawable.maintab_users_selected);
-		menu.add("setting").setIcon(R.drawable.maintab_setting_selected);
+		menu.add(getString(R.string.menu_add_device))
+				.setIcon(R.drawable.maintab_users_selected)
+				.setOnMenuItemClickListener(
+						new MenuItem.OnMenuItemClickListener() {
 
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								showAddDeviceInfo();
+								return true;
+							}
+						});
+		menu.add(getString(R.string.menu_refresh))
+				.setIcon(R.drawable.maintab_setting_selected)
+				.setOnMenuItemClickListener(
+						new MenuItem.OnMenuItemClickListener() {
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								loadPairList(true);
+								return true;
+							}
+						});
+
+		menu.add(getString(R.string.menu_settings))
+				.setIcon(R.drawable.maintab_setting_selected)
+				.setOnMenuItemClickListener(
+						new MenuItem.OnMenuItemClickListener() {
+
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								Intent i = new Intent(MainActivity.this,
+										SettingActivity.class);
+								i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+								startActivity(i);
+								return true;
+							}
+						});
 		return true;
 	}
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
-
-		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getTitle().equals("add device"))
-			showAddDeviceInfo();
 		return true;
 	}
 
@@ -266,13 +289,13 @@ public class MainActivity extends ListActivity {
 		pairListStatus = (TextView) findViewById(R.id.pair_list_empty);
 		pairListStatus.setVisibility(View.GONE);
 
-		uploadTab = (TextView) findViewById(R.id.upload_tab);
+		settingsTab = (TextView) findViewById(R.id.upload_tab);
 		peersTab = (TextView) findViewById(R.id.list_tab);
 
 		// By default we select peers tab
 		peersTab.setBackgroundResource(R.drawable.main_tab_selected_background);
 
-		uploadTab.setOnClickListener(new OnClickListener() {
+		settingsTab.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				Intent i = new Intent(MainActivity.this, SettingActivity.class);
 
@@ -296,7 +319,6 @@ public class MainActivity extends ListActivity {
 	}
 
 	public void showInfo() {
-		pairListStatus.setVisibility(View.VISIBLE);
 		new AlertDialog.Builder(this)
 				.setTitle("Warning")
 				.setMessage("Currently no paired devices")
@@ -448,14 +470,17 @@ public class MainActivity extends ListActivity {
 			final Device currentPair = deviceList.get(position);
 
 			holder.nickname.setText(currentPair.getNickname());
-			holder.lastSeen.setText("Last seen "+RelativeDate.getRelativeDate(currentPair.getLastSeen()));
+			holder.lastSeen.setText("Last seen "
+					+ RelativeDate.getRelativeDate(currentPair.getLastSeen()));
 			holder.email.setText(currentPair.getEmail());
 
 			holder.connectButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent fileListIntent = new Intent(MainActivity.this, FileListActivity.class);
-					fileListIntent.putExtra(FileListActivity.EXTRA_NICKNAME, currentPair.getNickname());
+					Intent fileListIntent = new Intent(MainActivity.this,
+							FileListActivity.class);
+					fileListIntent.putExtra(FileListActivity.EXTRA_NICKNAME,
+							currentPair.getNickname());
 					fileListIntent.putExtra(FileListActivity.EXTRA_PATH, "/");
 					startActivity(fileListIntent);
 				}

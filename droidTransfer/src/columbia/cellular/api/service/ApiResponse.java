@@ -54,19 +54,24 @@ public class ApiResponse {
 				ApiLog.e("JSON response error: " + e.getMessage()+" :: \n"+errorResponse);
 			}
 		} else {
-			if (!jsonResponse.isNull("error")) {
-				JSONObject err;
-				try {
-					err = jsonResponse.getJSONObject("error");
-					if (!err.isNull("message")) {
-						errors = new ApiError[1];
-						errors[0] = new ApiError(this.statusCode + "",
-								err.getString("message"));
+			try {
+				jsonResponse = new JSONObject(errorResponse);
+				if (!jsonResponse.isNull("error")) {
+					JSONObject err;
+					try {
+						err = jsonResponse.getJSONObject("error");
+						if (!err.isNull("message")) {
+							errors = new ApiError[1];
+							errors[0] = new ApiError(this.statusCode + "",
+									err.getString("message"));
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						ApiLog.w("JSON response error: " + e.getMessage());
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					ApiLog.w("JSON response error: " + e.getMessage());
 				}
+			} catch (JSONException e1) {
+				ApiLog.w("JSON Error: " + e1.getMessage()+" Status Code: "+statusCode);
 			}
 		}
 	}

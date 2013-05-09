@@ -3,6 +3,7 @@ package columbia.cellular.api.apicalls;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import columbia.cellular.Utils.DLog;
 import columbia.cellular.api.entities.Device;
 import columbia.cellular.api.entities.DeviceMessage;
 import columbia.cellular.api.service.ApiAuthenticator;
@@ -58,7 +59,7 @@ public abstract class ApiCall {
 	}
 
 	public void errorReceived(ApiResponse apiResponse) {
-		if (!returnEvents) {
+		if (!returnEvents || handler == null) {
 			return;
 		}
 
@@ -73,7 +74,6 @@ public abstract class ApiCall {
 				// TODO Auto-generated catch block
 			}
 		}
-
 		handler.handleError(errors, messageEntity);
 	}
 
@@ -89,15 +89,21 @@ public abstract class ApiCall {
 		if (!returnEvents || handler == null) {
 			return;
 		}
+
 		// TODO Auto-generated method stub
 		JSONObject responseJSON = apiResponse.getJsonResponse();
+		if (responseJSON == null) {
+			DLog.w("Api's response is null, something is wrong");
+			return;
+		}
+		
 		try {
 			DeviceMessage deviceMsg = new DeviceMessage(
 					responseJSON.getJSONObject("message"));
 			handler.entityReceived(deviceMsg);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			ApiLog.e("Could not created Message", e);
+			ApiLog.e("Could not create Message", e);
 			handler.handleError(null, null);
 		}
 	}

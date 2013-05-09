@@ -15,7 +15,7 @@ public abstract class ActivityApiResponseHandlerAbstract implements ActivityApiR
 	}
 	
 	protected void _handleErrorsGeneric(ApiError[] errors, ApiEntity entity){
-		if (errors != null && activity != null) {
+		if (errors != null && activity != null && !activity.isFinishing()) {
 			String errorMessages = "";
 			for (ApiError e : errors) {
 				errorMessages += "\n" + e.getErrorMessage();

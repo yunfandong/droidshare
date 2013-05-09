@@ -21,6 +21,7 @@ public class MultipartEntityWithProgress extends MultipartEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         this.outstream = new OutputStreamProgress(outstream, requestListener);
+        this.outstream.setContentLength(getContentLength());
         super.writeTo(this.outstream);
     }
 
