@@ -1,7 +1,7 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:orientation="vertical"
         android:padding="@dimen/padding_cell" >
@@ -42,6 +42,13 @@
                 android:minHeight="@dimen/default_text_field_padding"
                 android:text="@string/pair_open"
                 android:textSize="@dimen/small_text" />
+
+            <ImageButton
+                android:id="@+id/pair_delete_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_delete" />
 
         </LinearLayout>
 

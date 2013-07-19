@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
  * As implemented on http://kurtischiappone.com/programming/relative-date
  *
  */
+@SuppressLint("SimpleDateFormat")
 public class RelativeDate {
  
     private static SimpleDateFormat sdf = new SimpleDateFormat( "h:mm a MMM dd, yyyy" );

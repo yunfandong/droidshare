@@ -95,10 +95,14 @@ public class FileListActivity extends ListActivity {
     private String getFileListRegistryKey(String nickname, String path) {
         return "fileList." + nickname + "." + path;
     }
+    
+    protected void loadFileList(){
+        loadFileList(false);
+    }
 
-    protected void loadFileList() {
+    protected void loadFileList(boolean forceReload) {
         final String registryKey = getFileListRegistryKey(currentNickname, currentPath);
-        if (application.getFromRegistry(registryKey) != null) {
+        if (!forceReload && application.getFromRegistry(registryKey) != null) {
             listOfFiles = (JSONArray) application.getFromRegistry(registryKey);
             updateFileListView();
             return;
@@ -122,7 +126,7 @@ public class FileListActivity extends ListActivity {
             }
         });
 
-        fileListGetter.get(new Device(currentNickname, null), currentPath);
+        fileListGetter.get(new Device(currentNickname, null), currentPath, forceReload);
     }
 
     private void _handleFileListMessage(DeviceMessage message, String nickname, String path) {
@@ -267,6 +271,16 @@ public class FileListActivity extends ListActivity {
     protected void initViews() {
         ((TextView) findViewById(R.id.titlebar_nickname)).setText(currentNickname);
         ((TextView) findViewById(R.id.titlebar_path)).setText(currentPath);
+        
+        ImageButton refreshBtn = (ImageButton) findViewById(R.id.filelist_refresh);
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                loadFileList(true);
+            }
+        });
+        
         ImageButton upBtn = (ImageButton) findViewById(R.id.titlebar_folderup);
         if (currentPath.equals("/")) {
             upBtn.setVisibility(View.GONE);

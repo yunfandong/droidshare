@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import columbia.cellular.Utils.DLog;
 import columbia.cellular.file.OpenFileDialog;
 
 public class FileDownloadActivity extends ListActivity {
@@ -44,7 +43,6 @@ public class FileDownloadActivity extends ListActivity {
 
     private void doDownloadListUpdate() {
         setListAdapter(new FileDownloadListAdapter(this));
-        DLog.i("Updating views");
     }
 
     @Override

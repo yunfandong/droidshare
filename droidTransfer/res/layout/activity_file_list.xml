@@ -43,6 +43,15 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/filelist_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:background="@android:color/transparent"
+            android:scaleType="fitEnd"
+            android:src="@drawable/ic_refresh" />
+
+        <ImageButton
             android:id="@+id/titlebar_folderup"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

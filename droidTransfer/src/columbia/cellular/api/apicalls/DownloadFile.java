@@ -3,7 +3,6 @@ package columbia.cellular.api.apicalls;
 import java.io.File;
 
 import columbia.cellular.Utils.DLog;
-import columbia.cellular.api.service.ApiLog;
 import columbia.cellular.api.service.ApiParam;
 import columbia.cellular.api.service.ApiResponse;
 import columbia.cellular.api.service.ApiRequestWrapper;
@@ -44,7 +43,7 @@ public class DownloadFile extends ApiCall {
 	@Override
 	public void progressUpdated(long done, long total) {
 		// TODO Auto-generated method stub
-		ApiLog.i("Downloaded : "+done + " / "+ total);
+		//ApiLog.i("Downloaded : "+done + " / "+ total);
 		downloadRecord.updateProgress(done, total);
 	}
 	

@@ -15,5 +15,6 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-
+    <string name="pair_delete_confirmation">%s has been successfully deleted.</string>
+    <string name="pair_delete_confirm"> Are you sure you want to delete $nickname ($email)?</string>
 </resources>
